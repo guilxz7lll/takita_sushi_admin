@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Takita Sushi | Barcas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <nav class="navbar">
+      <a href="index.html" class="logo"><div class="logo-mark"><img src="imagens/logo.png" alt="Takita Sushi" /></div></a>
+      <ul class="nav-menu"><li><a href="index.html">Início</a></li><li><a href="cardapio.html">Cardápio</a></li><li><a href="barcas.html" class="active">Barcas</a></li><li><a href="eventos.html">Promoções</a></li><li><a href="pedido.html">Meu pedido</a></li></ul>
+      <button class="cart-button" id="openCartBtn" type="button" aria-label="Abrir carrinho"><i data-lucide="shopping-bag"></i><span id="cartCount">0</span></button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="categories-section"><div class="section-title"><span>Barcas</span><h2>Barcas Takita Sushi</h2><p>Opções mistas para compartilhar, eventos e aniversários.</p></div></section>
+    <section class="menu-section"><div class="menu-grid"><p class="empty-menu">Carregando barcas...</p></div></section>
+  </main>
+
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-header"><div><span>Seu pedido</span><h2>Carrinho</h2></div><button class="close-btn" id="closeCartBtn" type="button" aria-label="Fechar carrinho"><i data-lucide="x"></i></button></div>
+    <div class="cart-items" id="cartItems"><p class="empty-cart">Seu carrinho está vazio.</p></div>
+    <div class="cart-footer"><div class="cart-total"><span>Total</span><strong id="cartTotal">R$ 0,00</strong></div><button class="btn btn-primary full" id="checkoutBtn" type="button"><i data-lucide="send"></i>Finalizar pedido</button><button class="clear-cart" id="clearCartBtn" type="button">Limpar carrinho</button></div>
+  </aside>
+
+  <section class="checkout-modal" id="checkoutModal">
+    <div class="modal-content">
+      <button class="close-btn modal-close" id="closeModalBtn" type="button" aria-label="Fechar"><i data-lucide="x"></i></button><span>Finalização</span><h2>Dados do pedido</h2>
+      <form id="checkoutForm">
+        <label for="customerName">Nome<input type="text" id="customerName" maxlength="100" placeholder="Digite seu nome" required /></label>
+        <label for="customerPhone">Telefone<input type="tel" id="customerPhone" maxlength="30" placeholder="Digite seu telefone" required /></label>
+        <label for="customerAddress">Endereço<input type="text" id="customerAddress" maxlength="250" placeholder="Rua, número e bairro" required /></label>
+        <label for="customerReference">Ponto de referência<input type="text" id="customerReference" maxlength="250" placeholder="Ex: próximo ao posto" /></label>
+        <button class="location-btn" id="getLocationBtn" type="button"><i data-lucide="map-pin"></i>Usar minha localização</button><input type="hidden" id="customerLocation" />
+        <label for="paymentMethod">Forma de pagamento<select id="paymentMethod" required><option value="">Selecione</option><option value="pix">Pix</option><option value="cash">Dinheiro</option><option value="debit">Cartão de débito</option><option value="credit">Cartão de crédito</option></select></label>
+        <div id="pixInfo" style="display:none"><p><strong>Chave Pix</strong></p><input type="text" id="pixKey" readonly /><button type="button" id="copyPixBtn">Copiar chave Pix</button></div>
+        <label for="customerNote">Observação<textarea id="customerNote" maxlength="1000" placeholder="Ex: retirar algo, mandar molho extra..."></textarea></label>
+        <button class="btn btn-primary full" type="submit"><i data-lucide="message-circle"></i>Enviar no WhatsApp</button>
+      </form>
+    </div>
+  </section>
+
+  <div class="overlay" id="overlay"></div><div class="toast" id="toast">Produto adicionado ao carrinho.</div>
+  <footer class="footer"><strong>Takita Sushi</strong><p>O melhor sushi da cidade!</p></footer>
+  <script src="https://unpkg.com/lucide@latest"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="app-config.js"></script><script src="catalog-data.js"></script><script src="store-api.js"></script><script src="script.js"></script>
+</body>
+</html>

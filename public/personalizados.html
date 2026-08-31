@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Takita Sushi | Eventos</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="header">
+    <nav class="navbar">
+
+      <a href="index.html" class="logo">
+        <div class="logo-mark">
+          <img src="imagens/logo.png" alt="Takita Sushi" />
+        </div>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="cardapio.html">Cardápio</a></li>
+        <li><a href="barcas.html">Barcas</a></li>
+        <li><a href="personalizados.html" class="active">Eventos</a></li>
+        <li><a href="pedido.html">Meu pedido</a></li>
+      </ul>
+
+      <button class="cart-button" id="openCartBtn" type="button">
+        <i data-lucide="shopping-bag"></i>
+        <span id="cartCount">0</span>
+      </button>
+
+    </nav>
+  </header>
+
+  <!-- ================= MAIN ================= -->
+  <main>
+
+    <!-- ================= HERO PERSONALIZADOS ================= -->
+    <section class="custom-hero">
+
+      <div class="hero-bg-word">宴</div>
+
+      <div class="custom-hero-content">
+        <span class="red-label">Encomendas especiais</span>
+
+        <h1>Monte sua encomenda para aniversário</h1>
+
+        <p>
+          Escolha barcas de sushi, bolo personalizado, refrigerantes e detalhes do evento.
+          Depois envie tudo direto pelo WhatsApp para orçamento e confirmação.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#formulario-encomenda" class="btn btn-primary">
+            <i data-lucide="clipboard-pen"></i>
+            Personalizar pedido
+          </a>
+
+          <a href="barcas.html" class="btn btn-secondary">
+            <i data-lucide="ship-wheel"></i>
+            Ver barcas
+          </a>
+        </div>
+      </div>
+
+      <div class="custom-hero-card">
+
+        <div class="custom-card-line">
+          <i data-lucide="party-popper"></i>
+
+          <div>
+            <strong>Aniversários</strong>
+            <span>Barcas, bolos e bebidas</span>
+          </div>
+        </div>
+
+        <div class="custom-card-line">
+          <i data-lucide="cake"></i>
+
+          <div>
+            <strong>Bolos personalizados</strong>
+            <span>Tema, nome, idade e recheio</span>
+          </div>
+        </div>
+
+        <div class="custom-card-line">
+          <i data-lucide="sparkles"></i>
+
+          <div>
+            <strong>Pedido sob medida</strong>
+            <span>Orçamento pelo WhatsApp</span>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================= COMBOS SUGERIDOS ================= -->
+    <section class="custom-section">
+
+      <div class="section-title">
+        <span>Ideias prontas</span>
+        <h2>Combinações para eventos</h2>
+        <p>Use essas opções como base ou personalize tudo no formulário.</p>
+      </div>
+
+      <div class="custom-combos-grid">
+
+        <article class="custom-combo-card">
+          <div class="custom-combo-icon">
+            <i data-lucide="cake-slice"></i>
+          </div>
+
+          <span>Combo 01</span>
+          <h3>Barca + Bolo</h3>
+          <p>
+            Uma barca mista, um bolo personalizado e opção de incluir refrigerantes.
+          </p>
+
+          <button class="btn btn-primary select-combo-btn" type="button" data-combo="Barca + Bolo">
+            Selecionar
+          </button>
+        </article>
+
+        <article class="custom-combo-card">
+          <div class="custom-combo-icon">
+            <i data-lucide="party-popper"></i>
+          </div>
+
+          <span>Combo 02</span>
+          <h3>Mesa de aniversário</h3>
+          <p>
+            Barcas de sushi, bolo temático, refrigerantes e observações para montagem.
+          </p>
+
+          <button class="btn btn-primary select-combo-btn" type="button" data-combo="Mesa de aniversário">
+            Selecionar
+          </button>
+        </article>
+
+        <article class="custom-combo-card">
+          <div class="custom-combo-icon">
+            <i data-lucide="sparkles"></i>
+          </div>
+
+          <span>Combo 03</span>
+          <h3>Totalmente personalizado</h3>
+          <p>
+            O cliente informa exatamente o que deseja para receber orçamento completo.
+          </p>
+
+          <button class="btn btn-primary select-combo-btn" type="button" data-combo="Totalmente personalizado">
+            Selecionar
+          </button>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ================= FORMULÁRIO PERSONALIZADO ================= -->
+    <section class="custom-form-section" id="formulario-encomenda">
+
+      <div class="section-title">
+        <span>Personalização</span>
+        <h2>Monte sua encomenda</h2>
+        <p>Preencha as informações principais para enviarmos o orçamento pelo WhatsApp.</p>
+      </div>
+
+      <form class="custom-order-form" id="customOrderForm">
+
+        <!-- DADOS DO CLIENTE -->
+        <div class="form-block">
+          <div class="form-block-title">
+            <i data-lucide="user"></i>
+            <h3>Dados do cliente</h3>
+          </div>
+
+          <div class="form-grid">
+            <label for="customName">
+              Nome
+              <input type="text" id="customName" placeholder="Digite seu nome" required />
+            </label>
+
+            <label for="customPhone">
+              Telefone
+              <input type="tel" id="customPhone" placeholder="Digite seu WhatsApp" required />
+            </label>
+
+            <label for="customAddress">
+              Endereço
+              <input type="text" id="customAddress" placeholder="Rua, número e bairro" required />
+            </label>
+
+            <label for="customEventDate">
+              Data do evento
+              <input type="date" id="customEventDate" required />
+            </label>
+
+            <label for="customEventTime">
+              Horário desejado
+              <input type="time" id="customEventTime" required />
+            </label>
+
+            <label for="customPeople">
+              Quantidade de pessoas
+              <input type="number" id="customPeople" placeholder="Ex: 15" min="1" required />
+            </label>
+          </div>
+        </div>
+
+        <!-- TIPO DE COMBO -->
+        <div class="form-block">
+          <div class="form-block-title">
+            <i data-lucide="clipboard-pen"></i>
+            <h3>Tipo de encomenda</h3>
+          </div>
+
+          <div class="form-grid">
+            <label for="customCombo">
+              Modelo desejado
+              <select id="customCombo" required>
+                <option value="">Selecione</option>
+                <option value="Barca + Bolo">Barca + Bolo</option>
+                <option value="Mesa de aniversário">Mesa de aniversário</option>
+                <option value="Somente barcas">Somente barcas</option>
+                <option value="Somente bolo personalizado">Somente bolo personalizado</option>
+                <option value="Totalmente personalizado">Totalmente personalizado</option>
+              </select>
+            </label>
+
+            <label for="customPayment">
+              Forma de pagamento
+              <select id="customPayment" required>
+                <option value="">Selecione</option>
+                <option value="Pix">Pix</option>
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="Cartão">Cartão</option>
+                <option value="A combinar">A combinar</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <!-- BARCAS -->
+        <div class="form-block">
+          <div class="form-block-title">
+            <i data-lucide="ship-wheel"></i>
+            <h3>Barcas de sushi</h3>
+          </div>
+
+          <div class="form-grid">
+            <label for="barcaP">
+              Barca P Mista - 20 un.
+              <input type="number" id="barcaP" min="0" value="0" />
+            </label>
+
+            <label for="barcaM">
+              Barca M Mista - 30 un.
+              <input type="number" id="barcaM" min="0" value="0" />
+            </label>
+
+            <label for="barcaG">
+              Barca G Mista - 55 un.
+              <input type="number" id="barcaG" min="0" value="0" />
+            </label>
+
+            <label for="sushiNote">
+              Observação sobre os sushis
+              <input type="text" id="sushiNote" placeholder="Ex: mais hot, sem cream cheese..." />
+            </label>
+          </div>
+        </div>
+
+        <!-- BOLO -->
+        <div class="form-block">
+          <div class="form-block-title">
+            <i data-lucide="cake"></i>
+            <h3>Bolo personalizado</h3>
+          </div>
+
+          <div class="form-grid">
+            <label for="cakeOption">
+              Deseja bolo?
+              <select id="cakeOption" required>
+                <option value="">Selecione</option>
+                <option value="Sim">Sim</option>
+                <option value="Não">Não</option>
+                <option value="Quero orçamento">Quero orçamento</option>
+              </select>
+            </label>
+
+            <label for="cakeSize">
+              Tamanho do bolo
+              <select id="cakeSize">
+                <option value="">Selecione</option>
+                <option value="Pequeno">Pequeno</option>
+                <option value="Médio">Médio</option>
+                <option value="Grande">Grande</option>
+                <option value="A combinar">A combinar</option>
+              </select>
+            </label>
+
+            <label for="cakeFlavor">
+              Sabor/recheio
+              <input type="text" id="cakeFlavor" placeholder="Ex: chocolate, ninho, morango..." />
+            </label>
+
+            <label for="cakeTheme">
+              Tema do bolo
+              <input type="text" id="cakeTheme" placeholder="Ex: Naruto, floral, vermelho e preto..." />
+            </label>
+
+            <label for="cakeName">
+              Nome no bolo
+              <input type="text" id="cakeName" placeholder="Ex: Ana Clara" />
+            </label>
+
+            <label for="cakeAge">
+              Idade no bolo
+              <input type="text" id="cakeAge" placeholder="Ex: 18 anos" />
+            </label>
+          </div>
+        </div>
+
+        <!-- BEBIDAS -->
+        <div class="form-block">
+          <div class="form-block-title">
+            <i data-lucide="cup-soda"></i>
+            <h3>Refrigerantes</h3>
+          </div>
+
+          <div class="form-grid">
+            <label for="cocaQty">
+              Coca-Cola
+              <input type="number" id="cocaQty" min="0" value="0" />
+            </label>
+
+            <label for="guaranaQty">
+              Guaraná
+              <input type="number" id="guaranaQty" min="0" value="0" />
+            </label>
+
+            <label for="sodaOther">
+              Outros sabores
+              <input type="text" id="sodaOther" placeholder="Ex: Fanta, Sprite..." />
+            </label>
+
+            <label for="drinkSize">
+              Tamanho das bebidas
+              <select id="drinkSize">
+                <option value="">Selecione</option>
+                <option value="Lata">Lata</option>
+                <option value="1 litro">1 litro</option>
+                <option value="2 litros">2 litros</option>
+                <option value="A combinar">A combinar</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <!-- OBSERVAÇÕES -->
+        <div class="form-block">
+          <div class="form-block-title">
+            <i data-lucide="notebook-pen"></i>
+            <h3>Observações finais</h3>
+          </div>
+
+          <label for="customNotes">
+            Detalhes extras
+            <textarea
+              id="customNotes"
+              placeholder="Ex: cores da decoração, referência do bolo, horário exato de entrega, restrições alimentares..."
+            ></textarea>
+          </label>
+        </div>
+
+        <button class="btn btn-primary full" type="submit">
+          <i data-lucide="message-circle"></i>
+          Enviar encomenda no WhatsApp
+        </button>
+
+      </form>
+
+    </section>
+
+  </main>
+
+  <!-- ================= CARRINHO ================= -->
+  <aside class="cart-drawer" id="cartDrawer">
+
+    <div class="cart-header">
+      <div>
+        <span>Seu pedido</span>
+        <h2>Carrinho</h2>
+      </div>
+
+      <button class="close-btn" id="closeCartBtn" type="button">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <div class="cart-items" id="cartItems">
+      <p class="empty-cart">Seu carrinho está vazio.</p>
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total</span>
+        <strong id="cartTotal">R$ 0,00</strong>
+      </div>
+
+      <button class="btn btn-primary full" id="checkoutBtn" type="button">
+        <i data-lucide="send"></i>
+        Finalizar pedido
+      </button>
+
+      <button class="clear-cart" id="clearCartBtn" type="button">
+        Limpar carrinho
+      </button>
+    </div>
+
+  </aside>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="toast" id="toast">Encomenda selecionada.</div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <strong>Takita Sushi</strong>
+    <p>O melhor sushi da cidade!</p>
+  </footer>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app-config.js"></script>
+  <script src="catalog-data.js"></script>
+  <script src="store-api.js"></script>
+  <script src="script.js"></script>
+
+  <script>
+    lucide.createIcons();
+
+    let WHATSAPP_CUSTOM_NUMBER = window.TAKITA_SEED.settings.whatsapp_number;
+    window.TakitaStore.loadPublicData().then(({ settings }) => {
+      WHATSAPP_CUSTOM_NUMBER = settings.whatsapp_number;
+    }).catch(() => {});
+
+    const comboButtons = document.querySelectorAll(".select-combo-btn");
+    const comboSelect = document.getElementById("customCombo");
+
+    comboButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        comboSelect.value = button.dataset.combo;
+
+        document.getElementById("formulario-encomenda").scrollIntoView({
+          behavior: "smooth"
+        });
+      });
+    });
+
+    const customOrderForm = document.getElementById("customOrderForm");
+
+    customOrderForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const name = document.getElementById("customName").value.trim();
+      const phone = document.getElementById("customPhone").value.trim();
+      const address = document.getElementById("customAddress").value.trim();
+      const eventDate = document.getElementById("customEventDate").value;
+      const eventTime = document.getElementById("customEventTime").value;
+      const people = document.getElementById("customPeople").value;
+
+      const combo = document.getElementById("customCombo").value;
+      const payment = document.getElementById("customPayment").value;
+
+      const barcaP = document.getElementById("barcaP").value;
+      const barcaM = document.getElementById("barcaM").value;
+      const barcaG = document.getElementById("barcaG").value;
+      const sushiNote = document.getElementById("sushiNote").value.trim();
+
+      const cakeOption = document.getElementById("cakeOption").value;
+      const cakeSize = document.getElementById("cakeSize").value;
+      const cakeFlavor = document.getElementById("cakeFlavor").value.trim();
+      const cakeTheme = document.getElementById("cakeTheme").value.trim();
+      const cakeName = document.getElementById("cakeName").value.trim();
+      const cakeAge = document.getElementById("cakeAge").value.trim();
+
+      const cocaQty = document.getElementById("cocaQty").value;
+      const guaranaQty = document.getElementById("guaranaQty").value;
+      const sodaOther = document.getElementById("sodaOther").value.trim();
+      const drinkSize = document.getElementById("drinkSize").value;
+
+      const notes = document.getElementById("customNotes").value.trim();
+
+      const message = `
+Olá! Quero fazer uma encomenda personalizada no Takita Sushi.
+
+DADOS DO CLIENTE:
+Nome: ${name}
+Telefone: ${phone}
+Endereço: ${address}
+      
+
+EVENTO:
+Data: ${eventDate}
+Horário desejado: ${eventTime}
+Quantidade de pessoas: ${people}
+
+TIPO DE ENCOMENDA:
+Modelo: ${combo}
+Pagamento: ${payment}
+
+BARCAS:
+Barca P Mista: ${barcaP}
+Barca M Mista: ${barcaM}
+Barca G Mista: ${barcaG}
+Observação dos sushis: ${sushiNote || "Nenhuma"}
+
+BOLO:
+Deseja bolo: ${cakeOption}
+Tamanho: ${cakeSize || "Não informado"}
+Sabor/recheio: ${cakeFlavor || "Não informado"}
+Tema: ${cakeTheme || "Não informado"}
+Nome no bolo: ${cakeName || "Não informado"}
+Idade no bolo: ${cakeAge || "Não informado"}
+
+REFRIGERANTES:
+Coca-Cola: ${cocaQty}
+Guaraná: ${guaranaQty}
+Outros sabores: ${sodaOther || "Nenhum"}
+Tamanho das bebidas: ${drinkSize || "Não informado"}
+
+OBSERVAÇÕES:
+${notes || "Nenhuma"}
+
+Gostaria de receber um orçamento.
+      `.trim();
+
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/${WHATSAPP_CUSTOM_NUMBER}?text=${encodedMessage}`;
+
+      window.open(whatsappUrl, "_blank");
+    });
+  </script>
+  <!-- Vercel Web Analytics -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

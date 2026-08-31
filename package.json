@@ -1,0 +1,19 @@
+{
+  "name": "takita_sushi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check public/catalog-data.js && node --check public/store-api.js && node --check public/script.js && node --check public/pedido.js && node --check public/admin/admin.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mercadopago": "^3.1.0"
+  }
+}

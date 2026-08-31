@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Takita Sushi | Meu pedido</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <nav class="navbar">
+      <a href="index.html" class="logo"><div class="logo-mark"><img src="imagens/logo.png" alt="Takita Sushi" /></div></a>
+      <ul class="nav-menu">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="cardapio.html">Cardápio</a></li>
+        <li><a href="barcas.html">Barcas</a></li>
+        <li><a href="eventos.html">Promoções</a></li>
+        <li><a href="pedido.html" class="active">Meu pedido</a></li>
+      </ul>
+      <a class="cart-button tracking-menu-button" href="cardapio.html" aria-label="Voltar ao cardápio"><i data-lucide="utensils"></i></a>
+    </nav>
+  </header>
+
+  <main class="order-tracking-page">
+    <section class="order-tracking-intro">
+      <span class="red-label">Acompanhamento</span>
+      <h1>Veja o status do seu pedido</h1>
+      <p>Informe o código recebido após finalizar e o mesmo telefone usado no pedido.</p>
+
+      <form class="tracking-form" id="trackingForm">
+        <label>Código do pedido<input id="trackingCode" type="text" maxlength="11" placeholder="Ex: TS-12AB34CD" autocomplete="off" required /></label>
+        <label>Telefone<input id="trackingPhone" type="tel" maxlength="30" placeholder="Telefone informado no pedido" autocomplete="tel" required /></label>
+        <button class="btn btn-primary" type="submit"><i data-lucide="search"></i>Consultar pedido</button>
+      </form>
+      <p class="tracking-message" id="trackingMessage" role="status"></p>
+    </section>
+
+    <section class="order-status-card" id="orderStatusCard" hidden>
+      <div class="order-status-header">
+        <div><span>Pedido</span><h2 id="trackedOrderCode">—</h2></div>
+        <strong class="tracked-status" id="trackedStatus">Carregando</strong>
+      </div>
+
+      <div class="order-progress" id="orderProgress" aria-label="Etapas do pedido"></div>
+
+      <div class="customer-order-summary">
+        <div class="summary-section">
+          <span>Cliente</span>
+          <strong id="trackedCustomer">—</strong>
+          <small id="trackedCreatedAt">—</small>
+        </div>
+        <div class="summary-separator"></div>
+        <div class="summary-section">
+          <span>Itens</span>
+          <div id="trackedItems"></div>
+        </div>
+        <div class="summary-separator"></div>
+        <div class="summary-values">
+          <div><span>Subtotal</span><strong id="trackedSubtotal">—</strong></div>
+          <div id="trackedFeeRow"><span>Taxa</span><strong id="trackedFee">—</strong></div>
+          <div class="summary-grand-total"><span>Total confirmado</span><strong id="trackedTotal">—</strong></div>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary tracking-refresh" id="refreshOrderButton" type="button"><i data-lucide="refresh-cw"></i>Atualizar status</button>
+    </section>
+  </main>
+
+  <footer class="footer"><p>Takita Sushi • Acompanhe seu pedido com segurança.</p></footer>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app-config.js"></script>
+  <script src="store-api.js"></script>
+  <script src="pedido.js"></script>
+</body>
+</html>
