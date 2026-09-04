@@ -115,9 +115,13 @@
       <div class="product-info">
         <span>${escapeHtml(product.feature_tag || categoryName(product.category_id))}</span>
         <h3>${escapeHtml(product.name)}</h3>
+        ${isPromotionActive(product) ? `<span class="promotion-card-badge">${escapeHtml(product.promotion_label || "Promoção")}</span>` : ""}
         <p>${escapeHtml(product.description || "")}</p>
         <div class="product-footer">
-          <strong>${formatCurrency(product.price)}</strong>
+          <div class="product-price${isPromotionActive(product) ? " is-promotion" : ""}">
+            ${isPromotionActive(product) ? `<del>${formatCurrency(product.price)}</del>` : ""}
+            <strong>${formatCurrency(productPrice(product))}</strong>
+          </div>
           <button class="add-btn" type="button" data-id="${Number(product.id)}" ${state.settings.is_open ? "" : "disabled"}>
             <i data-lucide="plus"></i>
             Adicionar
@@ -164,6 +168,34 @@
     window.lucide?.createIcons();
   }
 
+
+
+  function renderPromotionsPage() {
+    const grid = document.getElementById("promotionsGrid");
+    if (!grid) return;
+
+    const promotions = state.products.filter(isPromotionActive);
+    const title = document.getElementById("promotionsTitle");
+    const text = document.getElementById("promotionsText");
+    const count = document.getElementById("promotionsCount");
+
+    if (!promotions.length) {
+      if (title) title.textContent = "Sem promoções hoje";
+      if (text) text.textContent = "Volte em breve para conferir as próximas ofertas da Takita Sushi.";
+      if (count) count.textContent = "Nenhuma oferta ativa no momento";
+      grid.innerHTML = `<div class="promotions-empty"><i data-lucide="badge-percent"></i><strong>Nenhuma promoção ativa</strong><p>Assim que uma oferta for publicada pelo restaurante, ela aparecerá aqui automaticamente.</p><a class="btn btn-primary" href="cardapio.html"><i data-lucide="utensils"></i>Ver cardápio</a></div>`;
+    } else {
+      if (title) title.textContent = "Ofertas especiais para aproveitar agora";
+      if (text) text.textContent = "Os preços abaixo já são aplicados automaticamente quando você adiciona o produto ao pedido.";
+      if (count) count.textContent = `${promotions.length} oferta${promotions.length === 1 ? "" : "s"} ativa${promotions.length === 1 ? "" : "s"}`;
+      grid.innerHTML = "";
+      promotions.forEach((product) => grid.appendChild(createProductCard(product)));
+    }
+
+    window.lucide?.createIcons();
+  }
+
+
   function featuredProducts() {
     const featured = state.products.filter((product) => product.featured);
     return featured.length ? featured : state.products.slice(0, 3);
@@ -185,7 +217,7 @@
       const name = document.getElementById("featuredName");
       const price = document.getElementById("featuredPrice");
       const info = document.getElementById("featuredInfo");
-      if (tag) tag.textContent = item.feature_tag || "Destaque";
+      if (tag) tag.textContent = isPromotionActive(item) ? (item.promotion_label || "Promoção") : (item.feature_tag || "Destaque");
       if (name) name.textContent = item.name;
       if (price) price.textContent = formatCurrency(productPrice(item));
       if (info) {
@@ -577,6 +609,7 @@
       syncCartWithCatalog();
       renderCategories();
       renderMenu();
+      renderPromotionsPage();
       renderCart();
       applyStoreSettings();
       startFeaturedCarousel();

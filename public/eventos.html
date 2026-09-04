@@ -14,10 +14,21 @@
       <button class="cart-button" id="openCartBtn" type="button" aria-label="Abrir carrinho"><i data-lucide="shopping-bag"></i><span id="cartCount">0</span></button>
     </nav>
   </header>
-  <main>
-    <section class="custom-hero">
-      <div class="hero-bg-word">宴</div>
-      <div class="custom-hero-content"><span class="red-label">Promoções</span><h1>Sem promoções hoje</h1><p>Acompanhe nossas redes sociais e volte em breve para conferir as novidades.</p><div class="hero-actions"><a href="cardapio.html" class="btn btn-primary"><i data-lucide="utensils"></i>Voltar ao cardápio</a></div></div>
+  <main class="promotions-page">
+    <section class="custom-hero promotions-hero">
+      <div class="hero-bg-word">特</div>
+      <div class="custom-hero-content">
+        <span class="red-label">Promoções</span>
+        <h1 id="promotionsTitle">Carregando ofertas...</h1>
+        <p id="promotionsText">Buscando as promoções disponíveis no momento.</p>
+        <div class="promotion-live-pill"><i data-lucide="sparkles"></i><span id="promotionsCount">Atualizando...</span></div>
+      </div>
+    </section>
+
+    <section class="menu-section promotions-section">
+      <div class="menu-grid promotions-grid" id="promotionsGrid">
+        <p class="empty-menu">Carregando promoções...</p>
+      </div>
     </section>
   </main>
   <aside class="cart-drawer" id="cartDrawer"><div class="cart-header"><div><span>Seu pedido</span><h2>Carrinho</h2></div><button class="close-btn" id="closeCartBtn" type="button"><i data-lucide="x"></i></button></div><div class="cart-items" id="cartItems"><p class="empty-cart">Seu carrinho está vazio.</p></div><div class="cart-footer"><div class="cart-total"><span>Total</span><strong id="cartTotal">R$ 0,00</strong></div><a class="btn btn-primary full" href="cardapio.html"><i data-lucide="utensils"></i>Ir ao cardápio</a><button class="clear-cart" id="clearCartBtn" type="button">Limpar carrinho</button></div></aside>

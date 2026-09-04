@@ -5789,3 +5789,43 @@ body > .toast.active,
     width: 100%;
   }
 }
+
+
+/* ================= PROMOÇÕES V3 ================= */
+.product-info { position: relative; }
+.promotion-card-badge {
+  display: inline-flex !important;
+  width: max-content;
+  max-width: 100%;
+  margin: 2px 0 5px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  color: #fff !important;
+  background: linear-gradient(135deg, #e00b25, #ff3b52);
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  letter-spacing: .45px;
+  text-transform: uppercase;
+  box-shadow: 0 7px 18px rgba(224, 11, 37, .22);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.product-price { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.product-price del { color: #777d86; font-size: 11px; font-weight: 700; }
+.product-price.is-promotion strong { color: #ff4057; }
+
+.promotions-hero { min-height: 410px; }
+.promotion-live-pill { display: inline-flex; align-items: center; gap: 8px; width: max-content; margin-top: 20px; padding: 9px 13px; border: 1px solid rgba(224, 11, 37, .28); border-radius: 999px; background: rgba(224, 11, 37, .08); color: #f7b8c0; font-size: 12px; font-weight: 800; }
+.promotion-live-pill i { width: 16px; height: 16px; color: #ff4057; }
+.promotions-section { padding-top: 35px; }
+.promotions-empty { grid-column: 1 / -1; min-height: 330px; display: grid; place-items: center; align-content: center; gap: 10px; padding: 35px; border: 1px dashed rgba(255,255,255,.12); border-radius: 20px; text-align: center; background: rgba(255,255,255,.02); }
+.promotions-empty > i { width: 38px; height: 38px; color: #e00b25; }
+.promotions-empty strong { font-size: 20px; }
+.promotions-empty p { max-width: 520px; margin: 0 0 8px; color: #8f949d; line-height: 1.6; }
+
+@media (max-width: 720px) {
+  .promotions-hero { min-height: 340px; }
+  .promotions-section { padding-top: 22px; }
+  .promotion-card-badge { max-width: 180px; }
+}

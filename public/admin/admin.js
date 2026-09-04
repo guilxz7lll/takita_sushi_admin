@@ -27,6 +27,7 @@
   const viewTitles = {
     dashboard: ["Painel administrativo", "Visão geral"],
     products: ["Gestão do cardápio", "Produtos"],
+    promotions: ["Ofertas do cardápio", "Promoções"],
     orders: ["Atendimento", "Pedidos"],
     reports: ["Auditoria e resultados", "Relatórios"],
     settings: ["Preferências da loja", "Configurações"]
@@ -327,6 +328,174 @@
     window.lucide?.createIcons();
   }
 
+
+
+  function getPromotionState(product) {
+    if (!product.promotion_enabled || product.promotion_price === null || product.promotion_price === undefined) {
+      return { key: "disabled", label: "Desativada", badge: "inactive" };
+    }
+
+    const now = Date.now();
+    const starts = product.promotion_starts_at ? new Date(product.promotion_starts_at).getTime() : null;
+    const ends = product.promotion_ends_at ? new Date(product.promotion_ends_at).getTime() : null;
+
+    if (starts && starts > now) return { key: "scheduled", label: "Agendada", badge: "confirmed" };
+    if (ends && ends <= now) return { key: "ended", label: "Encerrada", badge: "inactive" };
+    return { key: "active", label: "Ativa agora", badge: "active" };
+  }
+
+  function promotionPeriod(product) {
+    if (!product.promotion_starts_at && !product.promotion_ends_at) return "Sem prazo definido";
+    const start = product.promotion_starts_at ? formatDate(product.promotion_starts_at) : "Agora";
+    const end = product.promotion_ends_at ? formatDate(product.promotion_ends_at) : "Sem término";
+    return `${start} → ${end}`;
+  }
+
+  function filteredPromotions() {
+    const search = $("#promotionSearch")?.value.trim().toLocaleLowerCase("pt-BR") || "";
+    const status = $("#promotionStatusFilter")?.value || "all";
+
+    return state.data.products.filter((product) => {
+      const matchesText = `${product.name} ${product.promotion_label || ""}`.toLocaleLowerCase("pt-BR").includes(search);
+      const promoState = getPromotionState(product);
+      const hasPromotionData = Boolean(product.promotion_enabled || product.promotion_price !== null || product.promotion_label || product.promotion_starts_at || product.promotion_ends_at);
+      const matchesStatus = status === "all" ? hasPromotionData : promoState.key === status;
+      return matchesText && matchesStatus;
+    });
+  }
+
+  function renderPromotions() {
+    const tbody = $("#promotionsTableBody");
+    if (!tbody) return;
+
+    const products = filteredPromotions();
+    $("#promotionsCountLabel").textContent = `${products.length} promoç${products.length === 1 ? "ão" : "ões"}`;
+
+    tbody.innerHTML = products.map((product) => {
+      const promoState = getPromotionState(product);
+      const promoPrice = product.promotion_price === null || product.promotion_price === undefined
+        ? "—"
+        : formatCurrency(product.promotion_price);
+
+      return `
+        <tr>
+          <td data-label="Produto"><div class="product-cell"><img src="${escapeHtml(resolveImage(product.image_url))}" alt="" /><div><strong>${escapeHtml(product.name)}</strong><small>${escapeHtml(product.promotion_label || "Sem etiqueta")}</small></div></div></td>
+          <td data-label="Preço normal"><strong>${formatCurrency(product.price)}</strong></td>
+          <td data-label="Preço promocional"><strong class="promotion-price-admin">${promoPrice}</strong></td>
+          <td data-label="Período"><span class="promotion-period">${escapeHtml(promotionPeriod(product))}</span></td>
+          <td data-label="Status"><span class="status-badge ${promoState.badge}">${promoState.label}</span></td>
+          <td data-label="Ações"><div class="row-actions">
+            <button type="button" title="Editar promoção" data-edit-promotion="${product.id}"><i data-lucide="pencil"></i></button>
+            ${product.promotion_enabled ? `<button type="button" title="Desativar promoção" data-disable-promotion="${product.id}"><i data-lucide="badge-x"></i></button>` : ""}
+          </div></td>
+        </tr>`;
+    }).join("");
+
+    $("#promotionsEmpty").hidden = products.length > 0;
+    window.lucide?.createIcons();
+  }
+
+  function toDateTimeLocal(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 16);
+  }
+
+  function fillPromotionProductOptions(selectedId = null) {
+    const select = $("#promotionProduct");
+    select.innerHTML = state.data.products
+      .filter((product) => product.active || Number(product.id) === Number(selectedId))
+      .map((product) => `<option value="${product.id}" ${Number(product.id) === Number(selectedId) ? "selected" : ""}>${escapeHtml(product.name)}</option>`)
+      .join("");
+    updatePromotionBasePrice();
+  }
+
+  function updatePromotionBasePrice() {
+    const productId = Number($("#promotionProduct")?.value || 0);
+    const product = state.data.products.find((candidate) => Number(candidate.id) === productId);
+    if ($("#promotionBasePrice")) {
+      $("#promotionBasePrice").textContent = product ? `Preço normal: ${formatCurrency(product.price)}` : "Preço normal: —";
+    }
+  }
+
+  function openNewPromotion() {
+    $("#promotionForm").reset();
+    $("#promotionProductId").value = "";
+    $("#promotionEnabled").checked = true;
+    $("#promotionModalTitle").textContent = "Nova promoção";
+    fillPromotionProductOptions();
+    openModal("promotionModal");
+  }
+
+  function openEditPromotion(productId) {
+    const product = state.data.products.find((candidate) => Number(candidate.id) === Number(productId));
+    if (!product) return;
+
+    $("#promotionForm").reset();
+    $("#promotionProductId").value = product.id;
+    fillPromotionProductOptions(product.id);
+    $("#promotionProduct").disabled = true;
+    $("#promotionPrice").value = product.promotion_price ?? "";
+    $("#promotionLabel").value = product.promotion_label || "";
+    $("#promotionStartsAt").value = toDateTimeLocal(product.promotion_starts_at);
+    $("#promotionEndsAt").value = toDateTimeLocal(product.promotion_ends_at);
+    $("#promotionEnabled").checked = Boolean(product.promotion_enabled);
+    $("#promotionModalTitle").textContent = `Promoção • ${product.name}`;
+    updatePromotionBasePrice();
+    openModal("promotionModal");
+  }
+
+  async function submitPromotion(event) {
+    event.preventDefault();
+    const button = event.currentTarget.querySelector('[type="submit"]');
+    setButtonLoading(button, true, "Salvando promoção...");
+
+    try {
+      const productId = Number($("#promotionProductId").value || $("#promotionProduct").value);
+      const product = state.data.products.find((candidate) => Number(candidate.id) === productId);
+      if (!product) throw new Error("Selecione um produto válido.");
+
+      const enabled = $("#promotionEnabled").checked;
+      const price = Number($("#promotionPrice").value);
+      const startsValue = $("#promotionStartsAt").value;
+      const endsValue = $("#promotionEndsAt").value;
+
+      if (enabled && (!Number.isFinite(price) || price <= 0)) throw new Error("Informe um preço promocional válido.");
+      if (enabled && price >= Number(product.price)) throw new Error("O preço promocional deve ser menor que o preço normal.");
+      if (startsValue && endsValue && new Date(endsValue) <= new Date(startsValue)) throw new Error("A data final precisa ser posterior à data inicial.");
+
+      await Store.saveProduct({
+        id: productId,
+        promotion_enabled: enabled,
+        promotion_price: Number.isFinite(price) ? price : null,
+        promotion_label: $("#promotionLabel").value.trim(),
+        promotion_starts_at: startsValue ? new Date(startsValue).toISOString() : null,
+        promotion_ends_at: endsValue ? new Date(endsValue).toISOString() : null
+      });
+
+      $("#promotionProduct").disabled = false;
+      closeModal("promotionModal");
+      await reloadData();
+      showToast(enabled ? "Promoção salva e publicada." : "Promoção salva como desativada.");
+    } catch (error) {
+      showToast(error.message || "Não foi possível salvar a promoção.", "error");
+    } finally {
+      setButtonLoading(button, false);
+    }
+  }
+
+  async function disablePromotion(productId) {
+    try {
+      await Store.saveProduct({ id: productId, promotion_enabled: false });
+      await reloadData();
+      showToast("Promoção desativada. O preço normal voltou a valer.");
+    } catch (error) {
+      showToast(error.message || "Não foi possível desativar a promoção.", "error");
+    }
+  }
+
+
   function filteredOrders() {
     const search = $("#orderSearch").value.trim().toLocaleLowerCase("pt-BR");
     const status = $("#orderStatusFilter").value;
@@ -374,6 +543,7 @@
     renderStoreStatus();
     renderDashboard();
     renderProducts();
+    renderPromotions();
     renderOrders();
     fillSettingsForm();
     $("#loadingPanel").hidden = true;
@@ -409,6 +579,7 @@
 
   function closeModal(id) {
     const modal = $(`#${id}`);
+    if (id === "promotionModal" && $("#promotionProduct")) $("#promotionProduct").disabled = false;
     modal.classList.remove("active");
     modal.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
@@ -781,9 +952,13 @@
     $("#sidebarOverlay").addEventListener("click", closeSidebar);
     $("#productSearch").addEventListener("input", renderProducts);
     $("#productStatusFilter").addEventListener("change", renderProducts);
+    $("#promotionSearch")?.addEventListener("input", renderPromotions);
+    $("#promotionStatusFilter")?.addEventListener("change", renderPromotions);
+    $("#promotionProduct")?.addEventListener("change", updatePromotionBasePrice);
     $("#orderSearch").addEventListener("input", renderOrders);
     $("#orderStatusFilter").addEventListener("change", renderOrders);
     $("#productForm").addEventListener("submit", submitProduct);
+    $("#promotionForm")?.addEventListener("submit", submitPromotion);
     $("#settingsForm").addEventListener("submit", submitSettings);
     $("#archiveTodayButton").addEventListener("click", archiveToday);
     $("#loadReportButton").addEventListener("click", loadReport);
@@ -813,6 +988,11 @@
       const goView = event.target.closest("[data-go-view]");
       if (goView) setView(goView.dataset.goView);
       if (event.target.closest("[data-new-product]")) return openNewProduct();
+      if (event.target.closest("[data-new-promotion]")) return openNewPromotion();
+      const editPromotion = event.target.closest("[data-edit-promotion]");
+      if (editPromotion) return openEditPromotion(Number(editPromotion.dataset.editPromotion));
+      const disablePromotionButton = event.target.closest("[data-disable-promotion]");
+      if (disablePromotionButton) return disablePromotion(Number(disablePromotionButton.dataset.disablePromotion));
       const edit = event.target.closest("[data-edit-product]");
       if (edit) return openEditProduct(Number(edit.dataset.editProduct));
       const toggle = event.target.closest("[data-toggle-product]");

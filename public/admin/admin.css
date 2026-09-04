@@ -571,3 +571,27 @@ td { font-size: 14px; }
   .notification-toggle { width: 38px; min-width: 38px; padding: 0; }
   .notification-toggle span { display: none; }
 }
+
+
+/* ================= PROMOÇÕES ================= */
+.promotion-price-admin { color: #ff6678; }
+.promotion-period { display: block; max-width: 235px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.promotion-form { padding: 22px; }
+.promotion-form .modal-actions { margin-top: 20px; }
+.promotion-warning { display: flex; gap: 10px; align-items: flex-start; margin-top: 18px; padding: 13px 14px; border: 1px solid rgba(92, 211, 138, 0.18); border-radius: 12px; color: #aeb5bc; background: rgba(92, 211, 138, 0.06); }
+.promotion-warning i { width: 18px; min-width: 18px; color: var(--green); }
+.promotion-warning p { margin: 0; font-size: 11px; line-height: 1.55; }
+#promotionBasePrice { margin-top: 6px; color: #8e949f; }
+
+@media (max-width: 760px) {
+  .promotions-table { min-width: 0; }
+  .promotions-table thead { display: none; }
+  .promotions-table, .promotions-table tbody, .promotions-table tr, .promotions-table td { display: block; width: 100%; }
+  .promotions-table tr { padding: 12px 14px; border-top: 1px solid var(--border); }
+  .promotions-table td { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 8px 0; border: 0; text-align: right; }
+  .promotions-table td::before { content: attr(data-label); color: #747985; font-size: 10px; font-weight: 850; text-transform: uppercase; letter-spacing: .5px; text-align: left; }
+  .promotions-table td:first-child { display: block; text-align: left; }
+  .promotions-table td:first-child::before { display: none; }
+  .promotions-table .row-actions { justify-content: flex-end; }
+  .promotion-period { max-width: 62%; }
+}

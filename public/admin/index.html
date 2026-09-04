@@ -61,6 +61,9 @@
         <button class="nav-button" type="button" data-view="products">
           <i data-lucide="utensils"></i><span>Produtos</span>
         </button>
+        <button class="nav-button" type="button" data-view="promotions">
+          <i data-lucide="badge-percent"></i><span>Promoções</span>
+        </button>
         <button class="nav-button" type="button" data-view="orders">
           <i data-lucide="receipt-text"></i><span>Pedidos</span>
           <b id="pendingOrdersBadge">0</b>
@@ -159,6 +162,32 @@
               </table>
             </div>
             <div class="empty-state" id="productsEmpty" hidden><i data-lucide="search-x"></i><p>Nenhum produto encontrado.</p></div>
+          </div>
+        </section>
+
+
+        <section class="view" id="promotionsView" data-view-panel="promotions">
+          <div class="toolbar">
+            <div class="search-box"><i data-lucide="search"></i><input id="promotionSearch" type="search" placeholder="Buscar produto em promoção..." /></div>
+            <select id="promotionStatusFilter" aria-label="Filtrar promoções por status">
+              <option value="all">Todas</option>
+              <option value="active">Ativas agora</option>
+              <option value="scheduled">Agendadas</option>
+              <option value="ended">Encerradas</option>
+              <option value="disabled">Desativadas</option>
+            </select>
+            <button class="primary-button compact" type="button" data-new-promotion><i data-lucide="badge-percent"></i>Nova promoção</button>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header"><div><span class="eyebrow">Ofertas</span><h2>Promoções do cardápio</h2></div><span class="count-label" id="promotionsCountLabel">0 promoções</span></div>
+            <div class="table-wrap">
+              <table class="promotions-table">
+                <thead><tr><th>Produto</th><th>Preço normal</th><th>Preço promocional</th><th>Período</th><th>Status</th><th aria-label="Ações"></th></tr></thead>
+                <tbody id="promotionsTableBody"></tbody>
+              </table>
+            </div>
+            <div class="empty-state" id="promotionsEmpty" hidden><i data-lucide="badge-percent"></i><p>Nenhuma promoção encontrada.</p></div>
           </div>
         </section>
 
@@ -270,6 +299,46 @@
           <label class="switch-row compact-switch"><div><strong>Exibir na home</strong><small>Entra no carrossel.</small></div><input id="productFeatured" type="checkbox" /><span class="switch"></span></label>
         </div>
         <div class="modal-actions"><button class="secondary-button" type="button" data-close-modal="productModal">Cancelar</button><button class="primary-button" type="submit"><i data-lucide="save"></i>Salvar produto</button></div>
+      </form>
+    </div>
+  </section>
+
+
+  <section class="modal" id="promotionModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div><span class="eyebrow">Promoções</span><h2 id="promotionModalTitle">Nova promoção</h2></div>
+        <button class="icon-button" type="button" data-close-modal="promotionModal"><i data-lucide="x"></i></button>
+      </div>
+      <form id="promotionForm" class="promotion-form">
+        <input id="promotionProductId" type="hidden" />
+        <div class="fields-grid">
+          <label class="span-2">Produto
+            <select id="promotionProduct" required></select>
+            <small id="promotionBasePrice">Preço normal: —</small>
+          </label>
+          <label>Preço promocional (R$)
+            <input id="promotionPrice" type="number" min="0.01" step="0.01" inputmode="decimal" required />
+          </label>
+          <label>Etiqueta
+            <input id="promotionLabel" type="text" maxlength="80" placeholder="Ex: Oferta do dia" />
+          </label>
+          <label>Início <small>Opcional. Vazio = começa agora.</small>
+            <input id="promotionStartsAt" type="datetime-local" />
+          </label>
+          <label>Fim <small>Opcional. Vazio = sem data para terminar.</small>
+            <input id="promotionEndsAt" type="datetime-local" />
+          </label>
+          <label class="switch-row compact-switch span-2">
+            <div><strong>Promoção ativa</strong><small>Se desligar, o preço normal volta a ser usado.</small></div>
+            <input id="promotionEnabled" type="checkbox" checked /><span class="switch"></span>
+          </label>
+        </div>
+        <div class="promotion-warning"><i data-lucide="shield-check"></i><p>O preço promocional também é validado pelo banco ao criar o pedido. Não é apenas uma alteração visual.</p></div>
+        <div class="modal-actions">
+          <button class="secondary-button" type="button" data-close-modal="promotionModal">Cancelar</button>
+          <button class="primary-button" type="submit"><i data-lucide="save"></i>Salvar promoção</button>
+        </div>
       </form>
     </div>
   </section>
