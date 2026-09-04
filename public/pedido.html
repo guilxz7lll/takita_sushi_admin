@@ -9,7 +9,12 @@
 <body>
   <header class="header">
     <nav class="navbar">
-      <a href="index.html" class="logo"><div class="logo-mark"><img src="imagens/logo.png" alt="Takita Sushi" /></div></a>
+      <a href="index.html" class="logo">
+        <div class="logo-mark">
+          <img src="imagens/logo.png" alt="Takita Sushi" />
+        </div>
+      </a>
+
       <ul class="nav-menu">
         <li><a href="index.html">Início</a></li>
         <li><a href="cardapio.html">Cardápio</a></li>
@@ -17,7 +22,10 @@
         <li><a href="eventos.html">Promoções</a></li>
         <li><a href="pedido.html" class="active">Meu pedido</a></li>
       </ul>
-      <a class="cart-button tracking-menu-button" href="cardapio.html" aria-label="Voltar ao cardápio"><i data-lucide="utensils"></i></a>
+
+      <a class="cart-button tracking-menu-button" href="cardapio.html" aria-label="Voltar ao cardápio">
+        <i data-lucide="utensils"></i>
+      </a>
     </nav>
   </header>
 
@@ -28,22 +36,45 @@
       <p>Informe o código recebido após finalizar e o mesmo telefone usado no pedido.</p>
 
       <form class="tracking-form" id="trackingForm">
-        <label>Código do pedido<input id="trackingCode" type="text" maxlength="11" placeholder="Ex: TS-12AB34CD" autocomplete="off" required /></label>
-        <label>Telefone<input id="trackingPhone" type="tel" maxlength="30" placeholder="Telefone informado no pedido" autocomplete="tel" required /></label>
-        <button class="btn btn-primary" type="submit"><i data-lucide="search"></i>Consultar pedido</button>
-      </form>
-      <div class="tracking-notification-row">
-        <button class="btn btn-secondary tracking-notification-button" id="enableTrackingNotifications" type="button">
-          <i data-lucide="bell"></i> Ativar notificações
+        <label>
+          Código do pedido
+          <input
+            id="trackingCode"
+            type="text"
+            maxlength="11"
+            placeholder="Ex: TS-12AB34CD"
+            autocomplete="off"
+            required
+          />
+        </label>
+
+        <label>
+          Telefone
+          <input
+            id="trackingPhone"
+            type="tel"
+            maxlength="30"
+            placeholder="Telefone informado no pedido"
+            autocomplete="tel"
+            required
+          />
+        </label>
+
+        <button class="btn btn-primary" type="submit">
+          <i data-lucide="search"></i>
+          Consultar pedido
         </button>
-        <small>Receba aviso sonoro quando o status mudar.</small>
-      </div>
+      </form>
+
       <p class="tracking-message" id="trackingMessage" role="status"></p>
     </section>
 
     <section class="order-status-card" id="orderStatusCard" hidden>
       <div class="order-status-header">
-        <div><span>Pedido</span><h2 id="trackedOrderCode">—</h2></div>
+        <div>
+          <span>Pedido</span>
+          <h2 id="trackedOrderCode">—</h2>
+        </div>
         <strong class="tracked-status" id="trackedStatus">Carregando</strong>
       </div>
 
@@ -55,17 +86,36 @@
           <strong id="trackedCustomer">—</strong>
           <small id="trackedCreatedAt">—</small>
         </div>
+
         <div class="summary-separator"></div>
+
         <div class="summary-section">
           <span>Itens</span>
           <div id="trackedItems"></div>
         </div>
+
         <div class="summary-separator"></div>
+
         <div class="summary-values">
-          <div><span>Subtotal</span><strong id="trackedSubtotal">—</strong></div>
-          <div id="trackedFeeRow"><span>Taxa</span><strong id="trackedFee">—</strong></div>
-          <div id="trackedTipRow" hidden><span>Gorjeta do entregador</span><strong id="trackedTip">—</strong></div>
-          <div class="summary-grand-total"><span>Total confirmado</span><strong id="trackedTotal">—</strong></div>
+          <div>
+            <span>Subtotal</span>
+            <strong id="trackedSubtotal">—</strong>
+          </div>
+
+          <div id="trackedFeeRow">
+            <span>Taxa</span>
+            <strong id="trackedFee">—</strong>
+          </div>
+
+          <div id="trackedTipRow" hidden>
+            <span>Gorjeta do entregador</span>
+            <strong id="trackedTip">—</strong>
+          </div>
+
+          <div class="summary-grand-total">
+            <span>Total confirmado</span>
+            <strong id="trackedTotal">—</strong>
+          </div>
         </div>
       </div>
 
@@ -74,16 +124,23 @@
           <span>Seu pedido chegou?</span>
           <strong>Confirme a entrega quando estiver com o pedido em mãos.</strong>
         </div>
+
         <button class="btn btn-primary" id="confirmDeliveredButton" type="button">
-          <i data-lucide="package-check"></i> Pedido entregue
+          <i data-lucide="package-check"></i>
+          Pedido entregue
         </button>
       </div>
 
-      <button class="btn btn-secondary tracking-refresh" id="refreshOrderButton" type="button"><i data-lucide="refresh-cw"></i>Atualizar status</button>
+      <button class="btn btn-secondary tracking-refresh" id="refreshOrderButton" type="button">
+        <i data-lucide="refresh-cw"></i>
+        Atualizar status
+      </button>
     </section>
   </main>
 
-  <footer class="footer"><p>Takita Sushi • Acompanhe seu pedido com segurança.</p></footer>
+  <footer class="footer">
+    <p>Takita Sushi • Acompanhe seu pedido com segurança.</p>
+  </footer>
 
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
