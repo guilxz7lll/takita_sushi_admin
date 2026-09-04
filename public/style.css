@@ -5813,7 +5813,7 @@ body > .toast.active,
 }
 .product-price { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
 .product-price del { color: #777d86; font-size: 11px; font-weight: 700; }
-.product-price.is-promotion strong { color: #ff4057; }
+.product-price.is-promotion strong { color: #000000; }
 
 .promotions-hero { min-height: 410px; }
 .promotion-live-pill { display: inline-flex; align-items: center; gap: 8px; width: max-content; margin-top: 20px; padding: 9px 13px; border: 1px solid rgba(224, 11, 37, .28); border-radius: 999px; background: rgba(224, 11, 37, .08); color: #f7b8c0; font-size: 12px; font-weight: 800; }
