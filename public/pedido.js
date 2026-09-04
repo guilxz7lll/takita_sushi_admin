@@ -86,36 +86,14 @@
     } catch (_error) {}
   }
 
-  function playDeliverySound() {
-    const context = ensureAudioContext();
+function playDeliverySound() {
+  const audio = new Audio("sounds/pedido-a-caminho.mp3");
+  audio.volume = 1;
 
-    // Navegadores podem manter o áudio bloqueado até haver
-    // ao menos um toque/clique do usuário na página.
-    if (!context || context.state !== "running") return;
-
-    const now = context.currentTime;
-    const notes = [
-      { frequency: 740, start: 0.00, duration: 0.16 },
-      { frequency: 940, start: 0.18, duration: 0.16 },
-      { frequency: 1180, start: 0.36, duration: 0.28 }
-    ];
-
-    notes.forEach(({ frequency, start, duration }) => {
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-
-      oscillator.type = "sine";
-      oscillator.frequency.value = frequency;
-
-      gain.gain.setValueAtTime(0.0001, now + start);
-      gain.gain.exponentialRampToValueAtTime(0.16, now + start + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + start + duration);
-
-      oscillator.connect(gain).connect(context.destination);
-      oscillator.start(now + start);
-      oscillator.stop(now + start + duration + 0.02);
-    });
-  }
+  audio.play().catch((error) => {
+    console.log("Não foi possível reproduzir o som:", error);
+  });
+}
 
   function renderProgress(status) {
     const currentIndex = steps.findIndex(([value]) => value === status);
