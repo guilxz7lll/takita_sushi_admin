@@ -1031,6 +1031,83 @@ select option {
   background: #111;
 }
 
+.minimum-order-note {
+  margin: 10px 0 14px;
+  color: #ffb3b3;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.minimum-order-note.ok {
+  color: #a9e7b6;
+}
+
+.cash-change-box,
+.tip-box {
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #171717;
+}
+
+.cash-change-box small,
+.tip-heading small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.tip-heading strong {
+  display: block;
+  color: #fff;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.tip-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 13px;
+}
+
+.tip-option {
+  min-height: 42px;
+  padding: 9px 8px;
+  color: #fff;
+  background: #222;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.tip-option.active {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.tip-custom {
+  margin-top: 12px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 520px) {
+  .tip-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tip-option:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
 /* ================= OVERLAY E TOAST ================= */
 .overlay {
   position: fixed;

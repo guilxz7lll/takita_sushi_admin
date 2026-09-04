@@ -46,7 +46,7 @@
 
     const [categoriesResult, productsResult, settingsResult] = await Promise.all([
       supabaseClient.from("categories").select("*").eq("active", true).order("sort_order"),
-      supabaseClient.from("products").select("id,name,category_id,description,price,image_url,active,featured,feature_tag,sort_order,created_at,updated_at").eq("active", true).order("sort_order"),
+      supabaseClient.from("products").select("id,name,category_id,description,featured_description,price,image_url,active,featured,feature_tag,sort_order,promotion_enabled,promotion_price,promotion_label,promotion_starts_at,promotion_ends_at,created_at,updated_at").eq("active", true).order("sort_order"),
       supabaseClient.from("store_settings").select("*").eq("id", 1).single()
     ]);
 
@@ -74,7 +74,17 @@
         throw new Error(`${product.name} precisa de orçamento antes da finalização.`);
       }
 
-      const unitPrice = Number(product.price);
+      const now = Date.now();
+      const promotionStarts = product.promotion_starts_at ? new Date(product.promotion_starts_at).getTime() : null;
+      const promotionEnds = product.promotion_ends_at ? new Date(product.promotion_ends_at).getTime() : null;
+      const promotionActive = Boolean(
+        product.promotion_enabled &&
+        product.promotion_price !== null &&
+        product.promotion_price !== undefined &&
+        (!promotionStarts || promotionStarts <= now) &&
+        (!promotionEnds || promotionEnds > now)
+      );
+      const unitPrice = Number(promotionActive ? product.promotion_price : product.price);
       return {
         product_id: product.id,
         name: product.name,
@@ -85,10 +95,24 @@
     });
 
     const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+    const minimumOrderValue = Number(data.settings.minimum_order_value ?? 15);
+    if (subtotal < minimumOrderValue) {
+      throw new Error(`O pedido mínimo é de ${minimumOrderValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}.`);
+    }
+
     const feePercent = paymentMethod === "credit"
       ? Number(data.settings.credit_card_fee_percent || 0)
       : 0;
     const fee = Number((subtotal * feePercent / 100).toFixed(2));
+    const tip = Math.max(0, Number(payload.customer.tip || 0));
+    const total = Number((subtotal + fee + tip).toFixed(2));
+    const cashChangeFor = paymentMethod === "cash" && payload.customer.cash_change_for !== null && payload.customer.cash_change_for !== ""
+      ? Number(payload.customer.cash_change_for)
+      : null;
+
+    if (cashChangeFor !== null && cashChangeFor < total) {
+      throw new Error("O valor informado para troco deve ser igual ou maior que o total do pedido.");
+    }
 
     return {
       id: null,
@@ -96,7 +120,9 @@
       items,
       subtotal: Number(subtotal.toFixed(2)),
       fee,
-      total: Number((subtotal + fee).toFixed(2)),
+      tip,
+      cash_change_for: cashChangeFor,
+      total,
       settings: data.settings,
       local_only: true
     };

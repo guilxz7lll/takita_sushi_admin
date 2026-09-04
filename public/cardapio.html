@@ -34,6 +34,7 @@
     <div class="cart-items" id="cartItems"><p class="empty-cart">Seu carrinho está vazio.</p></div>
     <div class="cart-footer">
       <div class="cart-total"><span>Total</span><strong id="cartTotal">R$ 0,00</strong></div>
+      <p class="minimum-order-note" id="minimumOrderNote"></p>
       <button class="btn btn-primary full" id="checkoutBtn" type="button"><i data-lucide="send"></i>Finalizar pedido</button>
       <button class="clear-cart" id="clearCartBtn" type="button">Limpar carrinho</button>
     </div>
@@ -56,6 +57,34 @@
           </select>
         </label>
         <div id="pixInfo" style="display:none"><p><strong>Chave Pix</strong></p><input type="text" id="pixKey" readonly /><button type="button" id="copyPixBtn">Copiar chave Pix</button></div>
+
+        <div class="cash-change-box" id="cashChangeBox" hidden>
+          <label for="cashChangeFor">Troco para quanto?
+            <input type="number" id="cashChangeFor" min="0" step="0.01" inputmode="decimal" placeholder="Ex: 50,00" />
+          </label>
+          <small>Deixe vazio se não precisar de troco.</small>
+        </div>
+
+        <div class="tip-box">
+          <div class="tip-heading">
+            <strong>Dar gorjeta ao entregador</strong>
+            <small>100% da gorjeta vai para o entregador.</small>
+          </div>
+          <div class="tip-options" id="tipOptions">
+            <button class="tip-option active" type="button" data-tip="0">Sem gorjeta</button>
+            <button class="tip-option" type="button" data-tip="2">R$ 2</button>
+            <button class="tip-option" type="button" data-tip="5">R$ 5</button>
+            <button class="tip-option" type="button" data-tip="10">R$ 10</button>
+            <button class="tip-option" type="button" data-tip="custom">Outro valor</button>
+          </div>
+          <div class="tip-custom" id="tipCustomBox" hidden>
+            <label for="customTip">Valor da gorjeta
+              <input type="number" id="customTip" min="0" max="500" step="0.01" inputmode="decimal" placeholder="R$ 0,00" />
+            </label>
+          </div>
+          <input type="hidden" id="tipValue" value="0" />
+        </div>
+
         <label for="customerNote">Observação<textarea id="customerNote" maxlength="1000" placeholder="Ex: retirar algo, mandar molho extra..."></textarea></label>
         <button class="btn btn-primary full" type="submit"><i data-lucide="message-circle"></i>Enviar no WhatsApp</button>
       </form>

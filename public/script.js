@@ -41,6 +41,26 @@
     return number.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   }
 
+  function isPromotionActive(product) {
+    if (!product?.promotion_enabled || product.promotion_price === null || product.promotion_price === undefined) return false;
+    const now = Date.now();
+    const startsAt = product.promotion_starts_at ? new Date(product.promotion_starts_at).getTime() : null;
+    const endsAt = product.promotion_ends_at ? new Date(product.promotion_ends_at).getTime() : null;
+    return (!startsAt || startsAt <= now) && (!endsAt || endsAt > now);
+  }
+
+  function productPrice(product) {
+    return Number(isPromotionActive(product) ? product.promotion_price : product.price);
+  }
+
+  function cartSubtotal() {
+    return getCartItems().reduce((sum, item) => sum + productPrice(item) * item.quantity, 0);
+  }
+
+  function minimumOrderValue() {
+    return Number(state.settings.minimum_order_value ?? 15);
+  }
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -167,8 +187,11 @@
       const info = document.getElementById("featuredInfo");
       if (tag) tag.textContent = item.feature_tag || "Destaque";
       if (name) name.textContent = item.name;
-      if (price) price.textContent = formatCurrency(item.price);
-      if (info) info.textContent = item.description || "";
+      if (price) price.textContent = formatCurrency(productPrice(item));
+      if (info) {
+        const shortDescription = String(item.featured_description || item.description || "").trim();
+        info.textContent = shortDescription.length > 70 ? `${shortDescription.slice(0, 67).trim()}...` : shortDescription;
+      }
       image.classList.remove("changing");
       renderFeaturedDots(items.length);
     }, 180);
@@ -241,10 +264,18 @@
     const total = document.getElementById("cartTotal");
     const items = getCartItems();
     const quantity = items.reduce((sum, item) => sum + item.quantity, 0);
-    const amount = items.reduce((sum, item) => sum + Number(item.price || 0) * item.quantity, 0);
+    const amount = items.reduce((sum, item) => sum + productPrice(item) * item.quantity, 0);
+    const minimum = minimumOrderValue();
+    const minimumNote = document.getElementById("minimumOrderNote");
 
     if (count) count.textContent = quantity;
     if (total) total.textContent = formatCurrency(amount);
+    if (minimumNote) {
+      if (!items.length) minimumNote.textContent = `Pedido mínimo: ${formatCurrency(minimum)}`;
+      else if (amount < minimum) minimumNote.textContent = `Faltam ${formatCurrency(minimum - amount)} para o pedido mínimo de ${formatCurrency(minimum)}.`;
+      else minimumNote.textContent = `Pedido mínimo de ${formatCurrency(minimum)} atingido ✓`;
+      minimumNote.classList.toggle("ok", items.length > 0 && amount >= minimum);
+    }
     if (!container) return;
 
     if (!items.length) {
@@ -257,7 +288,7 @@
         <div class="cart-item-image"><img src="${escapeHtml(resolveImage(item.image_url))}" alt="${escapeHtml(item.name)}" /></div>
         <div class="cart-item-info">
           <h4>${escapeHtml(item.name)}</h4>
-          <p>${formatCurrency(Number(item.price) * item.quantity)}</p>
+          <p>${formatCurrency(productPrice(item) * item.quantity)}</p>
           <div class="cart-controls">
             <button class="qty-btn" type="button" data-action="decrease" data-id="${item.id}">−</button>
             <span>${item.quantity}</span>
@@ -284,6 +315,11 @@
   function openCheckout() {
     if (!state.cart.length) return showToast("Adicione um produto antes de finalizar.", "error");
     if (!state.settings.is_open) return showToast(state.settings.closed_message, "error");
+    const subtotal = cartSubtotal();
+    const minimum = minimumOrderValue();
+    if (subtotal < minimum) {
+      return showToast(`O pedido mínimo é ${formatCurrency(minimum)}. Faltam ${formatCurrency(minimum - subtotal)}.`, "error");
+    }
     document.getElementById("cartDrawer")?.classList.remove("active");
     document.getElementById("checkoutModal")?.classList.add("active");
     document.getElementById("overlay")?.classList.add("active");
@@ -302,12 +338,51 @@
     const payment = normalizePaymentMethod(document.getElementById("paymentMethod")?.value);
     const pixInfo = document.getElementById("pixInfo");
     const pixKey = document.getElementById("pixKey");
+    const cashChangeBox = document.getElementById("cashChangeBox");
+    const cashChangeFor = document.getElementById("cashChangeFor");
+
     if (pixInfo) pixInfo.style.display = payment === "pix" ? "block" : "none";
     if (pixKey) pixKey.value = state.settings.pix_key || "";
+    if (cashChangeBox) cashChangeBox.hidden = payment !== "cash";
+    if (payment !== "cash" && cashChangeFor) cashChangeFor.value = "";
+  }
+
+  function resetTipSelection() {
+    document.querySelectorAll(".tip-option").forEach((button) => button.classList.toggle("active", button.dataset.tip === "0"));
+    const tipValue = document.getElementById("tipValue");
+    const customTip = document.getElementById("customTip");
+    const customBox = document.getElementById("tipCustomBox");
+    if (tipValue) tipValue.value = "0";
+    if (customTip) customTip.value = "";
+    if (customBox) customBox.hidden = true;
+  }
+
+  function selectTip(button) {
+    document.querySelectorAll(".tip-option").forEach((item) => item.classList.remove("active"));
+    button.classList.add("active");
+    const tipValue = document.getElementById("tipValue");
+    const customTip = document.getElementById("customTip");
+    const customBox = document.getElementById("tipCustomBox");
+    const isCustom = button.dataset.tip === "custom";
+    if (customBox) customBox.hidden = !isCustom;
+    if (tipValue) tipValue.value = isCustom ? String(Number(customTip?.value || 0)) : button.dataset.tip;
+    if (isCustom) customTip?.focus();
+  }
+
+  function getTipValue() {
+    const value = Number(document.getElementById("tipValue")?.value || 0);
+    return Number.isFinite(value) && value >= 0 ? Math.min(value, 500) : 0;
   }
 
   function buildWhatsappMessage(order, customer) {
-    return `Olá, eu sou ${customer.name} e o meu pedido é o ${order.code}.`;
+    return [
+      "Olá! 😊 Acabei de fazer um pedido pelo site do Takita Sushi 🍣",
+      "",
+      `🧾 *Pedido:* ${order.code}`,
+      `👤 *Nome:* ${customer.name}`,
+      "",
+      "Pode confirmar o recebimento do meu pedido, por favor? 💛"
+    ].join("\n");
   }
 
   async function submitOrder(event) {
@@ -319,6 +394,20 @@
     const paymentMethod = normalizePaymentMethod(document.getElementById("paymentMethod")?.value);
     if (!paymentMethod) return showToast("Selecione a forma de pagamento.", "error");
 
+    const subtotal = cartSubtotal();
+    const minimum = minimumOrderValue();
+    if (subtotal < minimum) return showToast(`O pedido mínimo é ${formatCurrency(minimum)}.`, "error");
+
+    const tip = getTipValue();
+    const cashChangeInput = document.getElementById("cashChangeFor")?.value.trim() || "";
+    const cashChangeFor = paymentMethod === "cash" && cashChangeInput !== "" ? Number(cashChangeInput) : null;
+    const feePercent = paymentMethod === "credit" ? Number(state.settings.credit_card_fee_percent || 0) : 0;
+    const estimatedTotal = subtotal + (subtotal * feePercent / 100) + tip;
+
+    if (cashChangeFor !== null && (!Number.isFinite(cashChangeFor) || cashChangeFor < estimatedTotal)) {
+      return showToast(`O troco deve ser para um valor igual ou maior que ${formatCurrency(estimatedTotal)}.`, "error");
+    }
+
     const customer = {
       name: document.getElementById("customerName")?.value.trim() || "",
       phone: document.getElementById("customerPhone")?.value.trim() || "",
@@ -326,7 +415,9 @@
       reference: document.getElementById("customerReference")?.value.trim() || "",
       location_url: document.getElementById("customerLocation")?.value || state.mapsLink || "",
       payment_method: paymentMethod,
-      note: document.getElementById("customerNote")?.value.trim() || ""
+      note: document.getElementById("customerNote")?.value.trim() || "",
+      tip,
+      cash_change_for: cashChangeFor
     };
     const payload = {
       customer,
@@ -357,6 +448,7 @@
       window.TakitaStore.markOrderWhatsappOpened(order.code).catch(() => {});
       clearCart(false);
       form.reset();
+      resetTipSelection();
       updatePixInfo();
       closeAllPanels();
       showToast(`Pedido ${order.code} criado. Abrindo o acompanhamento...`);
@@ -452,6 +544,12 @@
     document.getElementById("clearCartBtn")?.addEventListener("click", () => clearCart(true));
     document.getElementById("checkoutForm")?.addEventListener("submit", submitOrder);
     document.getElementById("paymentMethod")?.addEventListener("change", updatePixInfo);
+    document.querySelectorAll(".tip-option").forEach((button) => button.addEventListener("click", () => selectTip(button)));
+    document.getElementById("customTip")?.addEventListener("input", (event) => {
+      const value = Math.max(0, Math.min(500, Number(event.currentTarget.value || 0)));
+      const tipValue = document.getElementById("tipValue");
+      if (tipValue) tipValue.value = String(Number.isFinite(value) ? value : 0);
+    });
     document.getElementById("getLocationBtn")?.addEventListener("click", requestLocation);
     document.getElementById("copyPixBtn")?.addEventListener("click", async () => {
       try {
@@ -467,7 +565,11 @@
     bindEvents();
     try {
       const data = await window.TakitaStore.loadPublicData();
-      state.products = data.products.map((product) => ({ ...product, price: Number(product.price) }));
+      state.products = data.products.map((product) => ({
+        ...product,
+        price: Number(product.price),
+        promotion_price: product.promotion_price === null || product.promotion_price === undefined ? null : Number(product.promotion_price)
+      }));
       state.categories = data.categories;
       state.settings = data.settings;
       document.documentElement.dataset.dataSource = data.source;
