@@ -158,6 +158,36 @@
     return throwIfError(result);
   }
 
+  async function confirmPublicOrderDelivered(orderCode, customerPhone) {
+    const supabaseClient = getClient();
+    if (!supabaseClient) throw new Error("Supabase não configurado.");
+    const result = await supabaseClient.rpc("confirm_public_order_delivered", {
+      p_order_code: String(orderCode || "").trim().toUpperCase(),
+      p_customer_phone: String(customerPhone || "").trim()
+    });
+    return throwIfError(result);
+  }
+
+  function subscribeAdminOrders(callback, statusCallback) {
+    const supabaseClient = getClient();
+    if (!supabaseClient) return { unsubscribe() {} };
+
+    const channel = supabaseClient
+      .channel(`takita-admin-orders-${Date.now()}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "orders" },
+        (payload) => callback?.(payload)
+      )
+      .subscribe((status) => statusCallback?.(status));
+
+    return {
+      unsubscribe() {
+        supabaseClient.removeChannel(channel).catch(() => {});
+      }
+    };
+  }
+
   async function signIn(email, password) {
     const supabaseClient = getClient();
     if (!supabaseClient) throw new Error("Conecte o projeto ao Supabase em app-config.js.");
@@ -321,6 +351,8 @@
     createPublicOrder,
     markOrderWhatsappOpened,
     getPublicOrderStatus,
+    confirmPublicOrderDelivered,
+    subscribeAdminOrders,
     signIn,
     signOut,
     getSession,

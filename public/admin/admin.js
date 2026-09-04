@@ -9,6 +9,11 @@
     editingImageUrl: ""
   };
 
+  let adminAudioContext = null;
+  let orderSubscription = null;
+  let orderFallbackTimer = null;
+  let realtimeReloadTimer = null;
+
   const statusLabels = {
     awaiting_whatsapp: "Aguardando WhatsApp",
     whatsapp_opened: "WhatsApp aberto",
@@ -64,6 +69,124 @@
     toast.className = `admin-toast active${type === "error" ? " error" : ""}`;
     window.clearTimeout(showToast.timer);
     showToast.timer = window.setTimeout(() => toast.classList.remove("active"), 3300);
+  }
+
+  function ensureAdminAudio() {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return null;
+    if (!adminAudioContext) adminAudioContext = new AudioContextClass();
+    if (adminAudioContext.state === "suspended") adminAudioContext.resume().catch(() => {});
+    return adminAudioContext;
+  }
+
+  function playAdminSound(kind = "update") {
+    const context = ensureAdminAudio();
+    if (!context || context.state !== "running") return;
+    const frequencies = kind === "new" ? [523, 659, 784] : [659, 784];
+    const now = context.currentTime;
+    frequencies.forEach((frequency, index) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = kind === "new" ? "triangle" : "sine";
+      oscillator.frequency.value = frequency;
+      const start = now + index * 0.11;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(kind === "new" ? 0.16 : 0.1, start + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.13);
+      oscillator.connect(gain).connect(context.destination);
+      oscillator.start(start);
+      oscillator.stop(start + 0.15);
+    });
+  }
+
+  function adminNotificationsEnabled() {
+    return "Notification" in window && Notification.permission === "granted";
+  }
+
+  function updateAdminNotificationButton() {
+    const button = $("#adminNotificationsButton");
+    if (!button) return;
+    const enabled = adminNotificationsEnabled();
+    button.classList.toggle("active", enabled);
+    button.setAttribute("aria-label", enabled ? "Notificações ativadas" : "Ativar notificações");
+    button.innerHTML = enabled
+      ? '<i data-lucide="bell-ring"></i><span>Ativadas</span>'
+      : '<i data-lucide="bell"></i><span>Notificações</span>';
+    window.lucide?.createIcons();
+  }
+
+  async function requestAdminNotifications() {
+    ensureAdminAudio();
+    if (!("Notification" in window)) return showToast("Este navegador não oferece notificações.", "error");
+    try {
+      const permission = await Notification.requestPermission();
+      updateAdminNotificationButton();
+      if (permission === "granted") {
+        playAdminSound("update");
+        showToast("Notificações ativadas.");
+      } else {
+        showToast("Permissão de notificações não concedida.", "error");
+      }
+    } catch (_error) {
+      showToast("Não foi possível ativar as notificações.", "error");
+    }
+  }
+
+  function showSystemNotification(title, body, tag) {
+    if (!adminNotificationsEnabled() || document.visibilityState === "visible") return;
+    try { new Notification(title, { body, tag }); } catch (_error) {}
+  }
+
+  function scheduleRealtimeReload() {
+    window.clearTimeout(realtimeReloadTimer);
+    realtimeReloadTimer = window.setTimeout(async () => {
+      try {
+        await reloadData();
+        if (state.view === "reports") await loadReport();
+      } catch (_error) {}
+    }, 220);
+  }
+
+  function handleOrderRealtime(payload) {
+    if (payload.eventType === "INSERT") {
+      const order = payload.new || {};
+      playAdminSound("new");
+      showToast(`Novo pedido ${order.code || "recebido"}.`);
+      showSystemNotification(
+        "Novo pedido Takita Sushi",
+        `${order.code || "Novo pedido"}${order.customer_name ? ` • ${order.customer_name}` : ""}`,
+        `takita-new-${order.id || Date.now()}`
+      );
+    } else if (payload.eventType === "UPDATE") {
+      const current = payload.new || {};
+      const previous = payload.old || {};
+      if (current.customer_confirmed_at && current.customer_confirmed_at !== previous.customer_confirmed_at) {
+        playAdminSound("update");
+        showToast(`${current.code || "Pedido"} confirmado como entregue pelo cliente.`);
+        showSystemNotification(
+          "Entrega confirmada",
+          `${current.code || "Pedido"} foi confirmado como entregue pelo cliente.`,
+          `takita-delivered-${current.id || Date.now()}`
+        );
+      }
+    }
+    scheduleRealtimeReload();
+  }
+
+  function stopOrderSync() {
+    orderSubscription?.unsubscribe?.();
+    orderSubscription = null;
+    window.clearInterval(orderFallbackTimer);
+    orderFallbackTimer = null;
+    window.clearTimeout(realtimeReloadTimer);
+  }
+
+  function startOrderSync() {
+    stopOrderSync();
+    orderSubscription = Store.subscribeAdminOrders(handleOrderRealtime);
+    orderFallbackTimer = window.setInterval(() => {
+      if (document.visibilityState === "visible") reloadData().catch(() => {});
+    }, 8000);
   }
 
   function setButtonLoading(button, loading, text = "Salvando...") {
@@ -626,6 +749,7 @@
 
   async function handleLogin(event) {
     event.preventDefault();
+    ensureAdminAudio();
     const button = event.currentTarget.querySelector('[type="submit"]');
     setButtonLoading(button, true, "Entrando...");
     try {
@@ -633,6 +757,7 @@
       await Store.assertAdmin();
       showApp();
       await reloadData();
+      startOrderSync();
     } catch (error) {
       await Store.signOut().catch(() => {});
       showToast(error.message || "E-mail ou senha inválidos.", "error");
@@ -642,13 +767,16 @@
   }
 
   async function logout() {
+    stopOrderSync();
     await Store.signOut().catch(() => {});
     showLogin();
   }
 
   function bindEvents() {
+    document.addEventListener("pointerdown", ensureAdminAudio, { once: true, passive: true });
     $("#adminLoginForm").addEventListener("submit", handleLogin);
     $("#logoutButton").addEventListener("click", logout);
+    $("#adminNotificationsButton").addEventListener("click", requestAdminNotifications);
     $("#menuButton").addEventListener("click", openSidebar);
     $("#sidebarOverlay").addEventListener("click", closeSidebar);
     $("#productSearch").addEventListener("input", renderProducts);
@@ -698,6 +826,17 @@
       if (event.target.classList.contains("modal")) closeModal(event.target.id);
     });
 
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && !$("#adminApp").hidden) {
+        ensureAdminAudio();
+        reloadData().catch(() => {});
+      }
+    });
+
+    window.addEventListener("focus", () => {
+      if (!$("#adminApp").hidden) reloadData().catch(() => {});
+    });
+
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") $$(".modal.active").forEach((modal) => closeModal(modal.id));
     });
@@ -706,6 +845,7 @@
   async function init() {
     bindEvents();
     $("#reportDate").value = todayInManaus();
+    updateAdminNotificationButton();
     window.lucide?.createIcons();
     if (!Store.isConfigured()) return showLogin();
 
@@ -715,6 +855,7 @@
       await Store.assertAdmin();
       showApp();
       await reloadData();
+      startOrderSync();
     } catch (_error) {
       await Store.signOut().catch(() => {});
       showLogin();

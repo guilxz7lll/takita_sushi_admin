@@ -32,6 +32,12 @@
         <label>Telefone<input id="trackingPhone" type="tel" maxlength="30" placeholder="Telefone informado no pedido" autocomplete="tel" required /></label>
         <button class="btn btn-primary" type="submit"><i data-lucide="search"></i>Consultar pedido</button>
       </form>
+      <div class="tracking-notification-row">
+        <button class="btn btn-secondary tracking-notification-button" id="enableTrackingNotifications" type="button">
+          <i data-lucide="bell"></i> Ativar notificações
+        </button>
+        <small>Receba aviso sonoro quando o status mudar.</small>
+      </div>
       <p class="tracking-message" id="trackingMessage" role="status"></p>
     </section>
 
@@ -58,8 +64,19 @@
         <div class="summary-values">
           <div><span>Subtotal</span><strong id="trackedSubtotal">—</strong></div>
           <div id="trackedFeeRow"><span>Taxa</span><strong id="trackedFee">—</strong></div>
+          <div id="trackedTipRow" hidden><span>Gorjeta do entregador</span><strong id="trackedTip">—</strong></div>
           <div class="summary-grand-total"><span>Total confirmado</span><strong id="trackedTotal">—</strong></div>
         </div>
+      </div>
+
+      <div class="delivery-confirmation-box" id="deliveryConfirmationBox" hidden>
+        <div>
+          <span>Seu pedido chegou?</span>
+          <strong>Confirme a entrega quando estiver com o pedido em mãos.</strong>
+        </div>
+        <button class="btn btn-primary" id="confirmDeliveredButton" type="button">
+          <i data-lucide="package-check"></i> Pedido entregue
+        </button>
       </div>
 
       <button class="btn btn-secondary tracking-refresh" id="refreshOrderButton" type="button"><i data-lucide="refresh-cw"></i>Atualizar status</button>

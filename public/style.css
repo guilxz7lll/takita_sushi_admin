@@ -5724,3 +5724,68 @@ body > .toast.active,
   .progress-step:first-child::before { display: block; height: 0; }
   .progress-step small { font-size: 13px; }
 }
+
+/* ================= ACOMPANHAMENTO V3: ALERTAS E CONFIRMAÇÃO ================= */
+.tracking-notification-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.tracking-notification-row small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.tracking-notification-button.active {
+  border-color: rgba(36, 190, 113, 0.4);
+  background: rgba(36, 190, 113, 0.12);
+  color: #fff;
+}
+
+.delivery-confirmation-box {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px;
+  border: 1px solid rgba(36, 190, 113, 0.34);
+  border-radius: 16px;
+  background: rgba(36, 190, 113, 0.08);
+}
+
+.delivery-confirmation-box[hidden] { display: none !important; }
+
+.delivery-confirmation-box > div {
+  display: grid;
+  gap: 5px;
+}
+
+.delivery-confirmation-box span {
+  color: #62d99e;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.delivery-confirmation-box strong {
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+@media (max-width: 760px) {
+  .tracking-notification-row,
+  .delivery-confirmation-box {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .tracking-notification-button,
+  .delivery-confirmation-box .btn {
+    width: 100%;
+  }
+}

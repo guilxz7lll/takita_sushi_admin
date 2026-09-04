@@ -530,3 +530,44 @@ td { font-size: 14px; }
   .panel-header { align-items: flex-start; }
   .product-cell img { width: 54px; height: 54px; }
 }
+
+/* ================= ALERTAS EM TEMPO REAL V3 ================= */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.topbar-actions .store-pill { margin-left: 0; }
+
+.notification-toggle {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.notification-toggle:hover,
+.notification-toggle.active {
+  color: #fff;
+  border-color: rgba(36, 190, 113, 0.36);
+  background: rgba(36, 190, 113, 0.1);
+}
+
+.notification-toggle svg { width: 16px; height: 16px; }
+
+@media (max-width: 620px) {
+  .topbar { gap: 9px; }
+  .topbar-actions { gap: 7px; }
+  .notification-toggle { width: 38px; min-width: 38px; padding: 0; }
+  .notification-toggle span { display: none; }
+}
