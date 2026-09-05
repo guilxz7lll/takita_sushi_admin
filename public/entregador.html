@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b0b0b" />
+  <title>Takita Sushi | Entregador</title>
+  <link rel="stylesheet" href="entregador.css" />
+</head>
+<body>
+  <main class="delivery-app">
+    <section class="login-card" id="loginView">
+      <div class="brand">
+        <span class="brand-kicker">Takita Sushi</span>
+        <h1>Área do entregador</h1>
+        <p>Entre com as credenciais fornecidas pelo administrador.</p>
+      </div>
+
+      <form id="deliveryLoginForm" class="login-form">
+        <label>
+          E-mail
+          <input id="deliveryEmail" type="email" autocomplete="email" required />
+        </label>
+
+        <label>
+          Senha
+          <input id="deliveryPassword" type="password" autocomplete="current-password" required />
+        </label>
+
+        <button class="primary-button" type="submit">
+          <i data-lucide="log-in"></i>
+          Entrar
+        </button>
+      </form>
+
+      <p class="message" id="loginMessage" role="status"></p>
+
+      <p class="no-signup">
+        A criação de contas é feita somente pelo administrador.
+      </p>
+    </section>
+
+    <section class="dashboard" id="dashboardView" hidden>
+      <header class="dashboard-header">
+        <div>
+          <span class="brand-kicker">Takita Sushi</span>
+          <h1>Entregas</h1>
+          <p id="deliveryUserName">Entregador</p>
+        </div>
+
+        <button class="icon-button" id="logoutButton" type="button" aria-label="Sair">
+          <i data-lucide="log-out"></i>
+        </button>
+      </header>
+
+      <section class="status-strip">
+        <div>
+          <span>Na rua agora</span>
+          <strong id="activeDeliveryCount">0</strong>
+        </div>
+
+        <button class="secondary-button" id="refreshDeliveriesButton" type="button">
+          <i data-lucide="refresh-cw"></i>
+          Atualizar
+        </button>
+      </section>
+
+      <p class="dashboard-message" id="dashboardMessage" role="status"></p>
+
+      <section class="deliveries-list" id="deliveriesList"></section>
+
+      <section class="empty-state" id="emptyState" hidden>
+        <i data-lucide="bike"></i>
+        <h2>Nenhuma entrega agora</h2>
+        <p>Quando um pedido for marcado como “Saiu para entrega”, ele aparecerá aqui.</p>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="deliveryToast" role="status"></div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../app-config.js"></script>
+  <script src="entregador.js"></script>
+</body>
+</html>

@@ -1,0 +1,411 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #080808;
+  --surface: #111111;
+  --surface-2: #181818;
+  --border: #2a2a2a;
+  --text: #f8f8f8;
+  --muted: #a4a4a4;
+  --red: #e11d2e;
+  --red-dark: #a90f1d;
+  --green: #26c56a;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top right, rgba(225, 29, 46, .13), transparent 34rem),
+    var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.delivery-app {
+  width: min(100%, 760px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 20px 14px 48px;
+}
+
+.login-card {
+  width: min(100%, 430px);
+  margin: 9vh auto 0;
+  padding: 28px 20px;
+  background: rgba(17, 17, 17, .96);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .35);
+}
+
+.brand-kicker {
+  display: inline-flex;
+  margin-bottom: 5px;
+  color: var(--red);
+  font-size: .79rem;
+  font-weight: 900;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.brand h1,
+.dashboard-header h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 8vw, 2.35rem);
+}
+
+.brand p,
+.dashboard-header p,
+.empty-state p {
+  color: var(--muted);
+}
+
+.login-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.login-form label {
+  display: grid;
+  gap: 7px;
+  font-size: .88rem;
+  font-weight: 750;
+}
+
+.login-form input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 13px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+  background: #0c0c0c;
+  color: white;
+}
+
+.login-form input:focus {
+  border-color: var(--red);
+}
+
+.primary-button,
+.secondary-button,
+.route-button,
+.map-link,
+.phone-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  border-radius: 12px;
+  border: 0;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.primary-button,
+.route-button {
+  background: var(--red);
+  color: white;
+}
+
+.primary-button:hover,
+.route-button:hover {
+  background: var(--red-dark);
+}
+
+.secondary-button,
+.map-link,
+.phone-link {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: white;
+}
+
+.message,
+.dashboard-message {
+  min-height: 22px;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.message.error,
+.dashboard-message.error {
+  color: #ff7782;
+}
+
+.no-signup {
+  margin: 18px 0 0;
+  color: #737373;
+  font-size: .78rem;
+  text-align: center;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.dashboard-header p {
+  margin: 4px 0 0;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: white;
+}
+
+.status-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.status-strip > div {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+
+.status-strip span {
+  color: var(--muted);
+  font-size: .82rem;
+}
+
+.status-strip strong {
+  font-size: 1.65rem;
+}
+
+.deliveries-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 13px;
+}
+
+.delivery-card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.delivery-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.delivery-card-header small {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted);
+}
+
+.delivery-code {
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.delivery-status {
+  padding: 7px 9px;
+  border-radius: 999px;
+  background: rgba(225, 29, 46, .13);
+  color: #ff6976;
+  font-size: .72rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.delivery-card-body {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+}
+
+.customer-name {
+  margin: 0 0 5px;
+  font-size: 1.15rem;
+}
+
+.address-box {
+  padding: 14px;
+  border-radius: 14px;
+  background: #0b0b0b;
+  border: 1px solid #222;
+}
+
+.address-box span,
+.info-block span,
+.money-line span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-size: .76rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.address-box strong {
+  display: block;
+  line-height: 1.45;
+}
+
+.reference {
+  margin-top: 7px;
+  color: #c7c7c7;
+  font-size: .88rem;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.route-button {
+  grid-column: 1 / -1;
+  min-height: 52px;
+  font-size: 1rem;
+}
+
+.items-list {
+  display: grid;
+  gap: 6px;
+}
+
+.item-row,
+.money-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.item-row {
+  color: #d7d7d7;
+  font-size: .88rem;
+}
+
+.money-box {
+  display: grid;
+  gap: 8px;
+  padding-top: 13px;
+  border-top: 1px solid var(--border);
+}
+
+.money-line span {
+  margin: 0;
+}
+
+.money-line strong {
+  text-align: right;
+}
+
+.tip-line strong {
+  color: var(--green);
+}
+
+.total-line {
+  margin-top: 4px;
+  font-size: 1.05rem;
+}
+
+.note-box {
+  padding: 12px;
+  border-radius: 12px;
+  background: #17110b;
+  color: #eacfa7;
+  font-size: .88rem;
+}
+
+.empty-state {
+  margin-top: 45px;
+  padding: 28px 15px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.empty-state svg {
+  width: 40px;
+  height: 40px;
+  color: var(--red);
+}
+
+.empty-state h2 {
+  margin-bottom: 6px;
+  color: white;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  z-index: 30;
+  width: min(calc(100% - 28px), 440px);
+  padding: 12px 15px;
+  border: 1px solid #333;
+  border-radius: 12px;
+  background: #191919;
+  color: white;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 15px);
+  transition: .2s ease;
+  box-shadow: 0 10px 35px rgba(0,0,0,.35);
+}
+
+.toast.active {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (min-width: 680px) {
+  .delivery-app {
+    padding-top: 32px;
+  }
+
+  .delivery-card-body {
+    padding: 20px;
+  }
+
+  .actions-grid {
+    grid-template-columns: 1.4fr 1fr 1fr;
+  }
+
+  .route-button {
+    grid-column: auto;
+  }
+}
