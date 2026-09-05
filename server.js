@@ -15,17 +15,6 @@ app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
 
-
-app.get("/entregador", (_req, res) => {
-  res.redirect(308, "/entregador/");
-});
-
-app.get("/entregador/", (_req, res) => {
-  res.sendFile(
-    path.join(__dirname, "public", "entregador", "index.html")
-  );
-});
-
 app.get("/", (_req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
