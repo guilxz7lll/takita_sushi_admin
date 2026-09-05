@@ -181,7 +181,7 @@
 
     if (!promotions.length) {
       if (title) title.textContent = "Sem promoções hoje";
-      if (text) text.textContent = "Volte em breve para conferir as próximas ofertas da Takita Sushi.";
+      if (text) text.textContent = "Volte em breve para conferir as próximas ofertas do Takita Sushi.";
       if (count) count.textContent = "Nenhuma oferta ativa no momento";
       grid.innerHTML = `<div class="promotions-empty"><i data-lucide="badge-percent"></i><strong>Nenhuma promoção ativa</strong><p>Assim que uma oferta for publicada pelo restaurante, ela aparecerá aqui automaticamente.</p><a class="btn btn-primary" href="cardapio.html"><i data-lucide="utensils"></i>Ver cardápio</a></div>`;
     } else {
@@ -408,7 +408,7 @@
 
   function buildWhatsappMessage(order, customer) {
     return [
-      "Olá! 🍣 Acabei de fazer um pedido pelo site da Takita Sushi.",
+      "Olá! 🍣 Acabei de fazer um pedido pelo site do Takita Sushi.",
       "",
       `📦 *Pedido:* ${order.code}`,
       `👤 *Nome:* ${customer.name}`,
