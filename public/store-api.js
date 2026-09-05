@@ -168,6 +168,35 @@
     return throwIfError(result);
   }
 
+
+  async function getPublicOrderByToken(trackingToken) {
+    const supabaseClient = getClient();
+    if (!supabaseClient) throw new Error("Supabase não configurado.");
+    const result = await supabaseClient.rpc("get_public_order_by_token", {
+      p_tracking_token: String(trackingToken || "").trim()
+    });
+    return throwIfError(result);
+  }
+
+  async function confirmPublicOrderDeliveredByToken(trackingToken) {
+    const supabaseClient = getClient();
+    if (!supabaseClient) throw new Error("Supabase não configurado.");
+    const result = await supabaseClient.rpc("confirm_public_order_delivered_by_token", {
+      p_tracking_token: String(trackingToken || "").trim()
+    });
+    return throwIfError(result);
+  }
+
+  async function createAdminOrder(payload) {
+    const supabaseClient = getClient();
+    if (!supabaseClient) throw new Error("Supabase não configurado.");
+    const result = await supabaseClient.rpc("create_admin_order", {
+      p_customer: payload.customer,
+      p_items: payload.items
+    });
+    return throwIfError(result);
+  }
+
   function subscribeAdminOrders(callback, statusCallback) {
     const supabaseClient = getClient();
     if (!supabaseClient) return { unsubscribe() {} };
@@ -351,7 +380,10 @@
     createPublicOrder,
     markOrderWhatsappOpened,
     getPublicOrderStatus,
+    getPublicOrderByToken,
     confirmPublicOrderDelivered,
+    confirmPublicOrderDeliveredByToken,
+    createAdminOrder,
     subscribeAdminOrders,
     signIn,
     signOut,

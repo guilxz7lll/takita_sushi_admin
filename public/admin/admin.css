@@ -595,3 +595,44 @@ td { font-size: 14px; }
   .promotions-table .row-actions { justify-content: flex-end; }
   .promotion-period { max-width: 62%; }
 }
+
+
+/* ================= PEDIDO MANUAL / LINK DE ACOMPANHAMENTO ================= */
+.order-code-cell { display: grid; gap: 4px; align-items: start; }
+.order-code-cell small { color: var(--muted); font-size: 9px; font-weight: 750; text-transform: uppercase; letter-spacing: 0.04em; }
+.manual-order-form { padding: 22px; display: grid; gap: 22px; }
+.manual-items-section { display: grid; gap: 12px; padding-top: 4px; }
+.manual-section-header { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.manual-section-header h3 { margin-top: 4px; font-size: 16px; }
+.manual-order-items { display: grid; gap: 10px; }
+.manual-order-item { display: grid; grid-template-columns: minmax(0, 1fr) 90px 125px 40px; gap: 10px; align-items: end; padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: #0c0e11; }
+.manual-order-item label { gap: 6px; }
+.manual-order-item select, .manual-order-item input { height: 42px; }
+.manual-item-total { min-height: 42px; display: grid; align-content: center; gap: 2px; }
+.manual-item-total span { color: var(--muted); font-size: 9px; font-weight: 750; text-transform: uppercase; }
+.manual-item-total strong { font-size: 13px; }
+.manual-remove-item:disabled { opacity: 0.35; cursor: not-allowed; }
+.manual-items-empty { padding: 16px; border: 1px dashed var(--border); border-radius: 12px; color: var(--muted); text-align: center; }
+.manual-payment-grid { padding-top: 2px; }
+.manual-order-summary { display: grid; gap: 8px; margin-left: auto; width: min(360px, 100%); padding: 16px; border: 1px solid var(--border); border-radius: 13px; background: #0b0d10; }
+.manual-order-summary > div { display: flex; justify-content: space-between; gap: 16px; color: #d8dade; font-size: 12px; }
+.manual-order-summary .manual-grand-total { margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--border); color: white; font-size: 16px; font-weight: 850; }
+.manual-order-summary small { color: var(--muted); text-align: right; }
+.manual-created-content { padding: 22px; display: grid; gap: 18px; }
+.manual-created-success { display: flex; align-items: center; gap: 12px; padding: 15px; border: 1px solid rgba(36,190,113,.25); border-radius: 12px; background: rgba(36,190,113,.07); }
+.manual-created-success svg { color: #5cd38a; }
+.manual-created-success div { display: grid; gap: 3px; }
+.manual-created-success span { color: var(--muted); font-size: 11px; }
+.tracking-link-field { display: flex; gap: 8px; align-items: center; }
+.tracking-link-field input { min-width: 0; flex: 1; font-size: 11px; }
+.full-button { width: 100%; justify-content: center; }
+.tracking-whatsapp-button { margin-top: 10px; }
+
+@media (max-width: 720px) {
+  .manual-order-item { grid-template-columns: 1fr 82px 40px; align-items: end; }
+  .manual-order-item > label:first-child { grid-column: 1 / -1; }
+  .manual-item-total { grid-column: 1 / 3; }
+  .manual-section-header { align-items: stretch; flex-direction: column; }
+  .tracking-link-field { align-items: stretch; flex-direction: column; }
+  .tracking-link-field button { width: 100%; justify-content: center; }
+}

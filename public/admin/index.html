@@ -204,6 +204,7 @@
               <option value="completed">Concluído</option>
               <option value="cancelled">Cancelado</option>
             </select>
+            <button class="primary-button compact" id="newOrderButton" type="button"><i data-lucide="plus"></i>Novo pedido</button>
             <button class="secondary-button danger-button compact" id="archiveTodayButton" type="button"><i data-lucide="archive-x"></i>Excluir histórico de hoje</button>
           </div>
 
@@ -340,6 +341,80 @@
           <button class="primary-button" type="submit"><i data-lucide="save"></i>Salvar promoção</button>
         </div>
       </form>
+    </div>
+  </section>
+
+
+  <section class="modal" id="manualOrderModal" aria-hidden="true">
+    <div class="modal-card large">
+      <div class="modal-header">
+        <div><span class="eyebrow">Atendimento</span><h2>Novo pedido</h2></div>
+        <button class="icon-button" type="button" data-close-modal="manualOrderModal"><i data-lucide="x"></i></button>
+      </div>
+
+      <form id="manualOrderForm" class="manual-order-form">
+        <div class="fields-grid">
+          <label>Nome do cliente<input id="manualCustomerName" type="text" maxlength="100" required /></label>
+          <label>Telefone<input id="manualCustomerPhone" type="tel" maxlength="30" required /></label>
+          <label class="span-2">Endereço<input id="manualCustomerAddress" type="text" maxlength="250" required /></label>
+          <label>Referência<input id="manualCustomerReference" type="text" maxlength="250" placeholder="Opcional" /></label>
+          <label>Link da localização<input id="manualCustomerLocation" type="url" maxlength="500" placeholder="Opcional" /></label>
+        </div>
+
+        <div class="manual-items-section">
+          <div class="manual-section-header">
+            <div><span class="eyebrow">Itens</span><h3>Produtos do pedido</h3></div>
+            <button class="secondary-button compact" id="addManualOrderItem" type="button"><i data-lucide="plus"></i>Adicionar item</button>
+          </div>
+          <div id="manualOrderItems" class="manual-order-items"></div>
+        </div>
+
+        <div class="fields-grid manual-payment-grid">
+          <label>Pagamento
+            <select id="manualPaymentMethod" required>
+              <option value="pix">Pix</option>
+              <option value="cash">Dinheiro</option>
+              <option value="debit">Débito</option>
+              <option value="credit">Crédito</option>
+            </select>
+          </label>
+          <label>Gorjeta do entregador (R$)<input id="manualTip" type="number" min="0" max="500" step="0.01" value="0" /></label>
+          <label id="manualCashChangeField" hidden>Troco para (R$)<input id="manualCashChangeFor" type="number" min="0" step="0.01" /></label>
+          <label class="span-2">Observação<textarea id="manualCustomerNote" rows="3" maxlength="1000" placeholder="Opcional"></textarea></label>
+        </div>
+
+        <div class="manual-order-summary">
+          <div><span>Subtotal</span><strong id="manualSubtotal">R$ 0,00</strong></div>
+          <div id="manualFeeRow" hidden><span>Taxa do crédito</span><strong id="manualFee">R$ 0,00</strong></div>
+          <div id="manualTipRow" hidden><span>Gorjeta</span><strong id="manualTipTotal">R$ 0,00</strong></div>
+          <div class="manual-grand-total"><span>Total</span><strong id="manualTotal">R$ 0,00</strong></div>
+          <small id="manualMinimumNote">Pedido mínimo: R$ 15,00</small>
+        </div>
+
+        <div class="modal-actions">
+          <button class="secondary-button" type="button" data-close-modal="manualOrderModal">Cancelar</button>
+          <button class="primary-button" type="submit"><i data-lucide="save"></i>Registrar pedido</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="modal" id="manualOrderCreatedModal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div><span class="eyebrow">Pedido registrado</span><h2 id="manualCreatedOrderCode">Pedido</h2></div>
+        <button class="icon-button" type="button" data-close-modal="manualOrderCreatedModal"><i data-lucide="x"></i></button>
+      </div>
+      <div class="manual-created-content">
+        <div class="manual-created-success"><i data-lucide="circle-check-big"></i><div><strong>Pedido salvo no sistema.</strong><span>Ele já aparece no painel e nos relatórios.</span></div></div>
+        <label>Link de acompanhamento
+          <div class="tracking-link-field">
+            <input id="manualCreatedTrackingLink" type="text" readonly />
+            <button class="secondary-button compact" id="copyManualTrackingLink" type="button"><i data-lucide="copy"></i>Copiar</button>
+          </div>
+        </label>
+        <button class="primary-button full-button" id="sendManualTrackingWhatsapp" type="button"><i data-lucide="message-circle"></i>Enviar acompanhamento pelo WhatsApp</button>
+      </div>
     </div>
   </section>
 

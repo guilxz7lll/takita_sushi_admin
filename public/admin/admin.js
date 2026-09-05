@@ -6,7 +6,9 @@
     data: { categories: [], products: [], settings: {}, orders: [] },
     reportData: [],
     view: "dashboard",
-    editingImageUrl: ""
+    editingImageUrl: "",
+    manualItems: [],
+    manualCreatedOrder: null
   };
 
   let adminAudioContext = null;
@@ -288,7 +290,7 @@
     const recent = state.data.orders.slice(0, 6);
     $("#recentOrdersBody").innerHTML = recent.map((order) => `
       <tr data-order-id="${order.id}">
-        <td data-label="Pedido"><button class="text-button order-code" type="button" data-view-order="${order.id}">${escapeHtml(order.code)}</button></td>
+        <td data-label="Pedido"><div class="order-code-cell"><button class="text-button order-code" type="button" data-view-order="${order.id}">${escapeHtml(order.code)}</button><small>${order.order_source === "whatsapp_admin" ? "WhatsApp / Admin" : "Site"}</small></div></td>
         <td data-label="Cliente"><div class="customer-cell"><strong>${escapeHtml(order.customer_name)}</strong><span>${escapeHtml(order.customer_phone)}</span></div></td>
         <td data-label="Horário">${formatDate(order.created_at)}</td>
         <td data-label="Total"><strong>${formatCurrency(order.total)}</strong></td>
@@ -492,6 +494,219 @@
       showToast("Promoção desativada. O preço normal voltou a valer.");
     } catch (error) {
       showToast(error.message || "Não foi possível desativar a promoção.", "error");
+    }
+  }
+
+
+  function promotionIsActive(product) {
+    if (!product?.promotion_enabled || product.promotion_price === null || product.promotion_price === undefined) return false;
+    const now = Date.now();
+    const starts = product.promotion_starts_at ? new Date(product.promotion_starts_at).getTime() : null;
+    const ends = product.promotion_ends_at ? new Date(product.promotion_ends_at).getTime() : null;
+    return (!starts || starts <= now) && (!ends || ends > now);
+  }
+
+  function manualProductPrice(product) {
+    if (!product) return 0;
+    return Number(promotionIsActive(product) ? product.promotion_price : product.price || 0);
+  }
+
+  function manualAvailableProducts() {
+    return state.data.products.filter((product) => product.active && product.price !== null && product.price !== undefined);
+  }
+
+  function newManualItem() {
+    const products = manualAvailableProducts();
+    return {
+      key: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      product_id: products[0]?.id || "",
+      quantity: 1
+    };
+  }
+
+  function manualTotals() {
+    const subtotal = state.manualItems.reduce((sum, item) => {
+      const product = state.data.products.find((candidate) => Number(candidate.id) === Number(item.product_id));
+      return sum + manualProductPrice(product) * Number(item.quantity || 0);
+    }, 0);
+    const method = $("#manualPaymentMethod")?.value || "pix";
+    const feePercent = method === "credit" ? Number(state.data.settings.credit_card_fee_percent || 0) : 0;
+    const fee = Number((subtotal * feePercent / 100).toFixed(2));
+    const tip = Math.max(0, Number($("#manualTip")?.value || 0));
+    return { subtotal, fee, tip, total: subtotal + fee + tip };
+  }
+
+  function renderManualOrderSummary() {
+    const totals = manualTotals();
+    $("#manualSubtotal").textContent = formatCurrency(totals.subtotal);
+    $("#manualFee").textContent = formatCurrency(totals.fee);
+    $("#manualFeeRow").hidden = totals.fee <= 0;
+    $("#manualTipTotal").textContent = formatCurrency(totals.tip);
+    $("#manualTipRow").hidden = totals.tip <= 0;
+    $("#manualTotal").textContent = formatCurrency(totals.total);
+    $("#manualMinimumNote").textContent = `Pedido mínimo: ${formatCurrency(Number(state.data.settings.minimum_order_value ?? 15))}`;
+    const isCash = $("#manualPaymentMethod")?.value === "cash";
+    $("#manualCashChangeField").hidden = !isCash;
+    if (!isCash) $("#manualCashChangeFor").value = "";
+  }
+
+  function renderManualOrderItems() {
+    const container = $("#manualOrderItems");
+    if (!container) return;
+    const products = manualAvailableProducts();
+
+    if (!products.length) {
+      container.innerHTML = '<div class="manual-items-empty">Nenhum produto ativo com preço cadastrado.</div>';
+      renderManualOrderSummary();
+      return;
+    }
+
+    container.innerHTML = state.manualItems.map((item, index) => {
+      const product = state.data.products.find((candidate) => Number(candidate.id) === Number(item.product_id));
+      const price = manualProductPrice(product);
+      const quantity = Math.max(1, Number(item.quantity || 1));
+      const options = products.map((candidate) => {
+        const candidatePrice = manualProductPrice(candidate);
+        return `<option value="${candidate.id}" ${Number(candidate.id) === Number(item.product_id) ? "selected" : ""}>${escapeHtml(candidate.name)} — ${formatCurrency(candidatePrice)}</option>`;
+      }).join("");
+      return `
+        <div class="manual-order-item" data-manual-item="${escapeHtml(item.key)}">
+          <label>Produto<select data-manual-product="${escapeHtml(item.key)}">${options}</select></label>
+          <label class="manual-qty-label">Qtd.<input data-manual-quantity="${escapeHtml(item.key)}" type="number" min="1" max="99" step="1" value="${quantity}" /></label>
+          <div class="manual-item-total"><span>Subtotal</span><strong>${formatCurrency(price * quantity)}</strong></div>
+          <button class="icon-button manual-remove-item" type="button" title="Remover item" data-remove-manual-item="${escapeHtml(item.key)}" ${state.manualItems.length === 1 ? "disabled" : ""}><i data-lucide="trash-2"></i></button>
+        </div>`;
+    }).join("");
+
+    renderManualOrderSummary();
+    window.lucide?.createIcons();
+  }
+
+  function openNewOrder() {
+    $("#manualOrderForm").reset();
+    $("#manualPaymentMethod").value = "pix";
+    $("#manualTip").value = "0";
+    state.manualItems = [newManualItem()];
+    renderManualOrderItems();
+    openModal("manualOrderModal");
+  }
+
+  function trackingUrlFor(order) {
+    if (!order?.tracking_token) return "";
+    const url = new URL("../pedido.html", window.location.href);
+    url.searchParams.set("t", order.tracking_token);
+    return url.toString();
+  }
+
+  function whatsappNumberFor(phone) {
+    const digits = String(phone || "").replace(/\D/g, "");
+    if (!digits) return "";
+    if (digits.startsWith("55")) return digits;
+    if (digits.length === 10 || digits.length === 11) return `55${digits}`;
+    return digits;
+  }
+
+  function trackingWhatsappMessage(order) {
+    return [
+      `Olá, ${order.customer_name || "cliente"}!`,
+      "",
+      `Seu pedido ${order.code} foi registrado com sucesso na Takita Sushi.`,
+      "",
+      "Você pode acompanhar o andamento do seu pedido em tempo real pelo link abaixo:",
+      trackingUrlFor(order),
+      "",
+      "Obrigado pelo pedido!"
+    ].join("\n");
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (_error) {
+      const input = document.createElement("textarea");
+      input.value = text;
+      input.style.position = "fixed";
+      input.style.opacity = "0";
+      document.body.appendChild(input);
+      input.select();
+      const copied = document.execCommand("copy");
+      input.remove();
+      return copied;
+    }
+  }
+
+  async function copyTrackingLink(order) {
+    const link = trackingUrlFor(order);
+    if (!link) return showToast("Este pedido não possui link de acompanhamento.", "error");
+    const copied = await copyText(link);
+    showToast(copied ? "Link de acompanhamento copiado." : "Não foi possível copiar o link.", copied ? "success" : "error");
+  }
+
+  function sendTrackingWhatsapp(order) {
+    const link = trackingUrlFor(order);
+    if (!link) return showToast("Este pedido não possui link de acompanhamento.", "error");
+    const number = whatsappNumberFor(order.customer_phone);
+    if (!number) return showToast("O pedido não possui um telefone válido.", "error");
+    const url = `https://wa.me/${number}?text=${encodeURIComponent(trackingWhatsappMessage(order))}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  function showManualOrderCreated(order, customer) {
+    state.manualCreatedOrder = { ...order, customer_name: customer.name, customer_phone: customer.phone };
+    $("#manualCreatedOrderCode").textContent = order.code;
+    $("#manualCreatedTrackingLink").value = trackingUrlFor(state.manualCreatedOrder);
+    closeModal("manualOrderModal");
+    openModal("manualOrderCreatedModal");
+  }
+
+  async function submitManualOrder(event) {
+    event.preventDefault();
+    const button = event.currentTarget.querySelector('[type="submit"]');
+    const products = manualAvailableProducts();
+    if (!products.length) return showToast("Cadastre pelo menos um produto ativo com preço.", "error");
+
+    const items = state.manualItems.map((item) => ({
+      product_id: Number(item.product_id),
+      quantity: Number(item.quantity)
+    }));
+    if (!items.length || items.some((item) => !item.product_id || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 99)) {
+      return showToast("Revise os produtos e quantidades do pedido.", "error");
+    }
+
+    const paymentMethod = $("#manualPaymentMethod").value;
+    const totals = manualTotals();
+    const minimum = Number(state.data.settings.minimum_order_value ?? 15);
+    if (totals.subtotal < minimum) return showToast(`O pedido mínimo é ${formatCurrency(minimum)}.`, "error");
+
+    const cashValue = $("#manualCashChangeFor").value.trim();
+    const cashChangeFor = paymentMethod === "cash" && cashValue !== "" ? Number(cashValue) : null;
+    if (cashChangeFor !== null && (!Number.isFinite(cashChangeFor) || cashChangeFor < totals.total)) {
+      return showToast(`O troco deve ser para um valor igual ou maior que ${formatCurrency(totals.total)}.`, "error");
+    }
+
+    const customer = {
+      name: $("#manualCustomerName").value.trim(),
+      phone: $("#manualCustomerPhone").value.trim(),
+      address: $("#manualCustomerAddress").value.trim(),
+      reference: $("#manualCustomerReference").value.trim(),
+      location_url: $("#manualCustomerLocation").value.trim(),
+      payment_method: paymentMethod,
+      note: $("#manualCustomerNote").value.trim(),
+      tip: Math.max(0, Number($("#manualTip").value || 0)),
+      cash_change_for: cashChangeFor
+    };
+
+    setButtonLoading(button, true, "Registrando pedido...");
+    try {
+      const order = await Store.createAdminOrder({ customer, items });
+      await reloadData();
+      showManualOrderCreated(order, customer);
+      showToast(`Pedido ${order.code} registrado.`);
+    } catch (error) {
+      showToast(error.message || "Não foi possível registrar o pedido.", "error");
+    } finally {
+      setButtonLoading(button, false);
     }
   }
 
@@ -700,6 +915,7 @@
     if (!order) return;
     $("#orderModalTitle").textContent = order.code;
     const items = order.order_items || [];
+    const trackingLink = trackingUrlFor(order);
     $("#orderDetailContent").innerHTML = `
       <div class="order-detail">
         <div class="order-detail-grid">
@@ -707,9 +923,11 @@
           <div class="detail-box"><span>Status</span><strong>${escapeHtml(statusLabels[order.status] || order.status)}</strong><p>${formatDate(order.created_at)}</p></div>
           <div class="detail-box"><span>Entrega</span><strong>${escapeHtml(order.customer_address)}</strong><p>Referência: ${escapeHtml(order.customer_reference || "Não informada")}</p></div>
           <div class="detail-box"><span>Pagamento</span><strong>${escapeHtml(paymentLabels[order.payment_method] || order.payment_method)}</strong><p>${Number(order.fee) > 0 ? `Taxa: ${formatCurrency(order.fee)}` : "Sem taxa adicional"}</p></div>
+          <div class="detail-box"><span>Origem</span><strong>${order.order_source === "whatsapp_admin" ? "WhatsApp / lançado pelo Admin" : "Site"}</strong><p>${Number(order.tip || 0) > 0 ? `Gorjeta: ${formatCurrency(order.tip)}` : "Sem gorjeta"}</p></div>
         </div>
         <div class="detail-section"><h3>Itens</h3>${items.map((item) => `<div class="detail-item"><span>${item.quantity}x ${escapeHtml(item.product_name)}</span><strong>${formatCurrency(item.subtotal)}</strong></div>`).join("") || "<p>Nenhum item encontrado.</p>"}<div class="detail-total"><span>Total</span><strong>${formatCurrency(order.total)}</strong></div></div>
         <div class="detail-section"><h3>Observação</h3><div class="detail-box"><p>${escapeHtml(order.customer_note || "Nenhuma")}</p></div></div>
+        ${trackingLink ? `<div class="detail-section"><h3>Acompanhamento do cliente</h3><div class="tracking-link-field"><input type="text" readonly value="${escapeHtml(trackingLink)}" /><button class="secondary-button compact" type="button" data-copy-tracking="${order.id}"><i data-lucide="copy"></i>Copiar</button></div><button class="primary-button full-button tracking-whatsapp-button" type="button" data-whatsapp-tracking="${order.id}"><i data-lucide="message-circle"></i>Enviar pelo WhatsApp</button></div>` : ""}
         <div class="detail-actions"><button class="secondary-button danger-button" type="button" data-archive-order="${order.id}"><i data-lucide="trash-2"></i>Excluir da tela</button><small>O pedido continuará disponível nos relatórios.</small></div>
       </div>`;
     window.lucide?.createIcons();
@@ -957,6 +1175,13 @@
     $("#promotionProduct")?.addEventListener("change", updatePromotionBasePrice);
     $("#orderSearch").addEventListener("input", renderOrders);
     $("#orderStatusFilter").addEventListener("change", renderOrders);
+    $("#newOrderButton")?.addEventListener("click", openNewOrder);
+    $("#manualOrderForm")?.addEventListener("submit", submitManualOrder);
+    $("#addManualOrderItem")?.addEventListener("click", () => { state.manualItems.push(newManualItem()); renderManualOrderItems(); });
+    $("#manualPaymentMethod")?.addEventListener("change", renderManualOrderSummary);
+    $("#manualTip")?.addEventListener("input", renderManualOrderSummary);
+    $("#copyManualTrackingLink")?.addEventListener("click", () => { if (state.manualCreatedOrder) copyTrackingLink(state.manualCreatedOrder); });
+    $("#sendManualTrackingWhatsapp")?.addEventListener("click", () => { if (state.manualCreatedOrder) sendTrackingWhatsapp(state.manualCreatedOrder); });
     $("#productForm").addEventListener("submit", submitProduct);
     $("#promotionForm")?.addEventListener("submit", submitPromotion);
     $("#settingsForm").addEventListener("submit", submitSettings);
@@ -974,6 +1199,20 @@
     });
 
     document.addEventListener("change", (event) => {
+      const manualProduct = event.target.closest("[data-manual-product]");
+      if (manualProduct) {
+        const item = state.manualItems.find((candidate) => candidate.key === manualProduct.dataset.manualProduct);
+        if (item) item.product_id = Number(manualProduct.value);
+        renderManualOrderItems();
+        return;
+      }
+      const manualQuantity = event.target.closest("[data-manual-quantity]");
+      if (manualQuantity) {
+        const item = state.manualItems.find((candidate) => candidate.key === manualQuantity.dataset.manualQuantity);
+        if (item) item.quantity = Math.max(1, Math.min(99, Number(manualQuantity.value || 1)));
+        renderManualOrderItems();
+        return;
+      }
       const statusSelect = event.target.closest("[data-order-status]");
       if (statusSelect) changeOrderStatus(Number(statusSelect.dataset.orderStatus), statusSelect.value, statusSelect);
     });
@@ -997,6 +1236,26 @@
       if (edit) return openEditProduct(Number(edit.dataset.editProduct));
       const toggle = event.target.closest("[data-toggle-product]");
       if (toggle) return toggleProduct(Number(toggle.dataset.toggleProduct), toggle.dataset.nextActive === "true");
+      const removeManualItem = event.target.closest("[data-remove-manual-item]");
+      if (removeManualItem) {
+        if (state.manualItems.length > 1) {
+          state.manualItems = state.manualItems.filter((item) => item.key !== removeManualItem.dataset.removeManualItem);
+          renderManualOrderItems();
+        }
+        return;
+      }
+      const copyTracking = event.target.closest("[data-copy-tracking]");
+      if (copyTracking) {
+        const trackedOrder = state.data.orders.find((candidate) => Number(candidate.id) === Number(copyTracking.dataset.copyTracking));
+        if (trackedOrder) copyTrackingLink(trackedOrder);
+        return;
+      }
+      const whatsappTracking = event.target.closest("[data-whatsapp-tracking]");
+      if (whatsappTracking) {
+        const trackedOrder = state.data.orders.find((candidate) => Number(candidate.id) === Number(whatsappTracking.dataset.whatsappTracking));
+        if (trackedOrder) sendTrackingWhatsapp(trackedOrder);
+        return;
+      }
       const order = event.target.closest("[data-view-order]");
       if (order) return openOrderDetail(Number(order.dataset.viewOrder));
       const archive = event.target.closest("[data-archive-order]");

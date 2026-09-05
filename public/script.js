@@ -470,10 +470,10 @@
       const whatsappNumber = String(order.settings.whatsapp_number || state.settings.whatsapp_number).replace(/\D/g, "");
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
-      localStorage.setItem("takita_last_order", JSON.stringify({
-        code: order.code,
-        phone: customer.phone
-      }));
+      localStorage.setItem("takita_last_order", JSON.stringify(order.tracking_token
+        ? { token: order.tracking_token, code: order.code, phone: customer.phone }
+        : { code: order.code, phone: customer.phone }
+      ));
 
       const whatsappOpenedInNewTab = Boolean(whatsappWindow);
       if (whatsappWindow) whatsappWindow.location.href = whatsappUrl;
@@ -487,7 +487,9 @@
       showToast(`Pedido ${order.code} criado. Abrindo o acompanhamento...`);
       if (whatsappOpenedInNewTab) {
         window.setTimeout(() => {
-          window.location.href = `pedido.html?codigo=${encodeURIComponent(order.code)}`;
+          window.location.href = order.tracking_token
+            ? `pedido.html?t=${encodeURIComponent(order.tracking_token)}`
+            : `pedido.html?codigo=${encodeURIComponent(order.code)}`;
         }, 450);
       } else {
         window.location.href = whatsappUrl;
