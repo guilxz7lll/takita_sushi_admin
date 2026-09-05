@@ -408,13 +408,14 @@
 
   function buildWhatsappMessage(order, customer) {
     return [
-      "Olá! Acabei de fazer um pedido pelo site do Takita Sushi.",
+      "Olá! 🍣 Acabei de fazer um pedido pelo site da Takita Sushi.",
       "",
-      `*Pedido:* ${order.code}`,
-      `*Nome:* ${customer.name}`,
+      `📦 *Pedido:* ${order.code}`,
+      `👤 *Nome:* ${customer.name}`,
       "",
-      "Pode confirmar o recebimento do meu pedido, por favor?",
-      "Obrigado!"
+      "Pode confirmar o recebimento do meu pedido, por favor? 😊",
+      "",
+      "Obrigado! ❤️"
     ].join("\n");
   }
 

@@ -608,14 +608,16 @@
 
   function trackingWhatsappMessage(order) {
     return [
-      `Olá, ${order.customer_name || "cliente"}!`,
+      `Olá, ${order.customer_name || "cliente"}! 🍣`,
       "",
-      `Seu pedido ${order.code} foi registrado com sucesso na Takita Sushi.`,
+      "Seu pedido foi registrado com sucesso! ✅",
       "",
-      "Você pode acompanhar o andamento do seu pedido em tempo real pelo link abaixo:",
-      trackingUrlFor(order),
+      `📦 *Pedido:* ${order.code}`,
       "",
-      "Obrigado pelo pedido!"
+      "Acompanhe o andamento do seu pedido em tempo real pelo link abaixo:",
+      `🔗 ${trackingUrlFor(order)}`,
+      "",
+      "Obrigado por pedir com a Takita Sushi! ❤️"
     ].join("\n");
   }
 
