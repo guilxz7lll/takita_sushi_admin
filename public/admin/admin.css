@@ -636,3 +636,671 @@ td { font-size: 14px; }
   .tracking-link-field { align-items: stretch; flex-direction: column; }
   .tracking-link-field button { width: 100%; justify-content: center; }
 }
+
+/* =========================================================
+   RESPONSIVIDADE V5 — PAINEL ADMIN MOBILE FIRST
+========================================================= */
+
+html,
+body,
+.admin-app,
+.admin-shell {
+  max-width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+img,
+svg,
+input,
+select,
+textarea,
+button {
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: min(310px, 88vw) !important;
+    transform: translateX(-102%);
+    transition: transform .22s ease;
+    box-shadow: 28px 0 70px rgba(0, 0, 0, .5);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .admin-shell {
+    margin-left: 0 !important;
+  }
+
+  .menu-button {
+    display: grid !important;
+    flex: 0 0 auto;
+  }
+
+  .topbar {
+    padding-inline: 16px !important;
+  }
+
+  .content {
+    width: 100% !important;
+    padding-inline: 16px !important;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .settings-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .product-form {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 700px) {
+  body {
+    font-size: 16px !important;
+  }
+
+  .topbar {
+    height: auto !important;
+    min-height: 70px !important;
+    padding: 10px 12px !important;
+    gap: 9px !important;
+  }
+
+  .topbar > div:not(.topbar-actions) {
+    min-width: 0;
+  }
+
+  .topbar h1 {
+    max-width: 42vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 18px !important;
+  }
+
+  .topbar-actions {
+    min-width: 0;
+    gap: 6px !important;
+  }
+
+  .store-pill {
+    min-width: 38px;
+    min-height: 38px;
+    padding: 0 10px !important;
+  }
+
+  .notification-toggle {
+    width: 38px !important;
+    min-width: 38px !important;
+    padding: 0 !important;
+  }
+
+  .notification-toggle span {
+    display: none !important;
+  }
+
+  .content {
+    padding: 16px 12px 42px !important;
+  }
+
+  .welcome-card {
+    min-height: 0 !important;
+    padding: 20px 16px !important;
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+
+  .welcome-card .primary-button {
+    width: 100% !important;
+  }
+
+  .metric-grid {
+    gap: 10px !important;
+  }
+
+  .metric-card {
+    min-height: 132px !important;
+    padding: 15px !important;
+  }
+
+  .metric-card > strong {
+    font-size: clamp(20px, 6vw, 26px) !important;
+    overflow-wrap: anywhere;
+  }
+
+  .panel {
+    border-radius: 14px !important;
+    overflow: hidden;
+  }
+
+  .panel-header {
+    min-height: 0 !important;
+    padding: 15px 14px !important;
+    align-items: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+
+  .toolbar,
+  .report-toolbar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 9px !important;
+    width: 100% !important;
+  }
+
+  .toolbar .search-box,
+  .report-toolbar .date-filter {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+
+  .toolbar > select,
+  .toolbar > button,
+  .report-toolbar > select,
+  .report-toolbar > button {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  /* Tabelas principais viram cards */
+  .products-table-wrap table,
+  .orders-table-wrap table,
+  .recent-table-wrap table,
+  .report-table-wrap table,
+  .promotions-table {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .products-table-wrap thead,
+  .orders-table-wrap thead,
+  .recent-table-wrap thead,
+  .report-table-wrap thead,
+  .promotions-table thead {
+    display: none !important;
+  }
+
+  .products-table-wrap tbody,
+  .orders-table-wrap tbody,
+  .recent-table-wrap tbody,
+  .report-table-wrap tbody,
+  .promotions-table tbody {
+    display: grid !important;
+    gap: 10px !important;
+    padding: 10px !important;
+  }
+
+  .products-table-wrap tr,
+  .orders-table-wrap tr,
+  .recent-table-wrap tr,
+  .report-table-wrap tr,
+  .promotions-table tr {
+    display: grid !important;
+    gap: 0 !important;
+    width: 100% !important;
+    padding: 10px 11px !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 13px !important;
+    background: #0d0f12 !important;
+  }
+
+  .products-table-wrap td,
+  .orders-table-wrap td,
+  .recent-table-wrap td,
+  .report-table-wrap td,
+  .promotions-table td {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+    padding: 9px 2px !important;
+    border: 0 !important;
+    text-align: right !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .products-table-wrap td::before,
+  .orders-table-wrap td::before,
+  .recent-table-wrap td::before,
+  .report-table-wrap td::before,
+  .promotions-table td::before {
+    content: attr(data-label) !important;
+    flex: 0 0 88px !important;
+    color: #747985 !important;
+    font-size: 10px !important;
+    font-weight: 850 !important;
+    letter-spacing: .5px !important;
+    text-align: left !important;
+    text-transform: uppercase !important;
+  }
+
+  .products-table-wrap td:first-child,
+  .orders-table-wrap td:first-child,
+  .recent-table-wrap td:first-child,
+  .report-table-wrap td:first-child,
+  .promotions-table td:first-child {
+    align-items: flex-start !important;
+  }
+
+  .product-cell,
+  .customer-cell,
+  .order-code-cell,
+  .report-items-cell,
+  .promotion-period {
+    min-width: 0 !important;
+    max-width: none !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .row-actions {
+    margin-left: auto !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+  }
+
+  .status-select {
+    width: min(210px, 58vw) !important;
+    min-width: 0 !important;
+  }
+
+  /* Modais como bottom sheet */
+  .modal {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+
+  .modal-card,
+  .modal-card.large {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 95dvh !important;
+    border-radius: 22px 22px 0 0 !important;
+  }
+
+  .modal-header {
+    min-height: 70px !important;
+    padding: 14px 15px !important;
+  }
+
+  .modal-header h2 {
+    font-size: 18px !important;
+  }
+
+  .product-form,
+  .promotion-form,
+  .manual-order-form,
+  .manual-created-content,
+  .order-detail {
+    padding: 16px !important;
+  }
+
+  .fields-grid,
+  .order-detail-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .span-2 {
+    grid-column: 1 !important;
+  }
+
+  .image-field {
+    grid-template-columns: 92px minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .image-field > small {
+    grid-column: 2 !important;
+  }
+
+  .manual-order-item {
+    grid-template-columns: minmax(0, 1fr) 80px 40px !important;
+    gap: 8px !important;
+  }
+
+  .manual-order-item > label:first-child {
+    grid-column: 1 / -1 !important;
+  }
+
+  .manual-item-total {
+    grid-column: 1 / 3 !important;
+  }
+
+  .manual-section-header {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+
+  .manual-section-header .secondary-button {
+    width: 100% !important;
+  }
+
+  .manual-order-summary {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .tracking-link-field {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+
+  .tracking-link-field button {
+    width: 100% !important;
+  }
+
+  .modal-actions,
+  .detail-actions,
+  .settings-actions {
+    align-items: stretch !important;
+    flex-direction: column-reverse !important;
+  }
+
+  .modal-actions button,
+  .detail-actions button,
+  .settings-actions button {
+    width: 100% !important;
+  }
+
+  .admin-toast {
+    right: 12px !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    max-width: calc(100% - 24px) !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .topbar h1 {
+    max-width: 34vw;
+    font-size: 16px !important;
+  }
+
+  .store-pill strong {
+    display: none !important;
+  }
+
+  .store-pill {
+    width: 38px !important;
+    min-width: 38px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+
+  .metric-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .toolbar,
+  .report-toolbar {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .toolbar .search-box,
+  .report-toolbar .date-filter {
+    grid-column: 1 !important;
+  }
+
+  .products-table-wrap td::before,
+  .orders-table-wrap td::before,
+  .recent-table-wrap td::before,
+  .report-table-wrap td::before,
+  .promotions-table td::before {
+    flex-basis: 76px !important;
+  }
+
+  .image-field {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .image-field > small {
+    grid-column: 1 !important;
+  }
+
+  .image-preview {
+    width: min(180px, 100%) !important;
+    margin: 0 auto !important;
+  }
+
+  .manual-order-item {
+    grid-template-columns: minmax(0, 1fr) 38px !important;
+  }
+
+  .manual-order-item > label:first-child,
+  .manual-order-item > label:nth-child(2),
+  .manual-item-total {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE V5.1 — cartões realmente mobile
+   Em telas pequenas os dados deixam de disputar espaço
+   lado a lado e passam a usar toda a largura disponível.
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .admin-shell {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .topbar {
+    min-height: 64px !important;
+    height: auto !important;
+    padding: 10px 12px !important;
+    gap: 10px !important;
+  }
+
+  .topbar > div:not(.store-pill) {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+  }
+
+  .topbar-kicker {
+    display: none !important;
+  }
+
+  .topbar h1 {
+    max-width: none !important;
+    margin: 0 !important;
+    font-size: 18px !important;
+    line-height: 1.15 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .content {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 14px 10px 34px !important;
+  }
+
+  .panel {
+    width: 100% !important;
+    border-radius: 16px !important;
+  }
+
+  .panel-header {
+    min-height: 68px !important;
+    padding: 14px 15px !important;
+  }
+
+  .panel-header h2 {
+    font-size: 19px !important;
+  }
+
+  .toolbar,
+  .report-toolbar {
+    gap: 9px !important;
+  }
+
+  .toolbar input,
+  .toolbar select,
+  .toolbar button,
+  .report-toolbar input,
+  .report-toolbar select,
+  .report-toolbar button {
+    min-height: 48px !important;
+  }
+
+  .products-table-wrap tbody,
+  .orders-table-wrap tbody,
+  .recent-table-wrap tbody,
+  .report-table-wrap tbody,
+  .promotions-table tbody {
+    gap: 12px !important;
+    padding: 10px !important;
+  }
+
+  .products-table-wrap tr,
+  .orders-table-wrap tr,
+  .recent-table-wrap tr,
+  .report-table-wrap tr,
+  .promotions-table tr {
+    padding: 15px !important;
+    border-radius: 15px !important;
+  }
+
+  .products-table-wrap td,
+  .orders-table-wrap td,
+  .recent-table-wrap td,
+  .report-table-wrap td,
+  .promotions-table td {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    justify-items: stretch !important;
+    align-items: start !important;
+    gap: 5px !important;
+    width: 100% !important;
+    padding: 10px 0 !important;
+    text-align: left !important;
+  }
+
+  .products-table-wrap td + td,
+  .orders-table-wrap td + td,
+  .recent-table-wrap td + td,
+  .report-table-wrap td + td,
+  .promotions-table td + td {
+    border-top: 1px solid rgba(255, 255, 255, 0.055) !important;
+  }
+
+  .products-table-wrap td::before,
+  .orders-table-wrap td::before,
+  .recent-table-wrap td::before,
+  .report-table-wrap td::before,
+  .promotions-table td::before {
+    display: block !important;
+    width: auto !important;
+    min-width: 0 !important;
+    flex: none !important;
+    margin: 0 !important;
+    color: #767c88 !important;
+    font-size: 9px !important;
+    line-height: 1.2 !important;
+    letter-spacing: .75px !important;
+    text-align: left !important;
+  }
+
+  .order-code,
+  .customer-cell,
+  .product-cell,
+  .report-items-cell,
+  .promotion-period {
+    width: 100% !important;
+    min-width: 0 !important;
+    text-align: left !important;
+  }
+
+  .customer-cell strong,
+  .product-cell strong {
+    font-size: 14px !important;
+    line-height: 1.35 !important;
+  }
+
+  .customer-cell span,
+  .product-cell small {
+    font-size: 11.5px !important;
+    line-height: 1.4 !important;
+  }
+
+  .orders-table-wrap td,
+  .recent-table-wrap td,
+  .report-table-wrap td,
+  .products-table-wrap td,
+  .promotions-table td {
+    font-size: 13.5px !important;
+  }
+
+  .status-select {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 46px !important;
+    font-size: 13px !important;
+  }
+
+  .row-actions {
+    width: 100% !important;
+    margin: 2px 0 0 !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    gap: 9px !important;
+  }
+
+  .row-actions button {
+    width: 46px !important;
+    height: 46px !important;
+    flex: 0 0 46px !important;
+  }
+
+  .metric-card {
+    min-height: 135px !important;
+    padding: 17px !important;
+  }
+
+  .metric-card > strong {
+    font-size: 27px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .content {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  .panel {
+    border-radius: 14px !important;
+  }
+
+  .products-table-wrap tbody,
+  .orders-table-wrap tbody,
+  .recent-table-wrap tbody,
+  .report-table-wrap tbody,
+  .promotions-table tbody {
+    padding: 8px !important;
+  }
+
+  .products-table-wrap tr,
+  .orders-table-wrap tr,
+  .recent-table-wrap tr,
+  .report-table-wrap tr,
+  .promotions-table tr {
+    padding: 14px !important;
+  }
+}

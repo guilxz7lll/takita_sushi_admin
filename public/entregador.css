@@ -409,3 +409,122 @@ button {
     grid-column: auto;
   }
 }
+
+/* =========================================================
+   RESPONSIVIDADE V5 — ÁREA DO ENTREGADOR
+========================================================= */
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+button,
+input,
+a {
+  max-width: 100%;
+}
+
+.delivery-app {
+  width: min(100%, 820px);
+  padding-inline: clamp(12px, 4vw, 24px);
+}
+
+@media (max-width: 640px) {
+  .delivery-app {
+    padding-top: 14px;
+    padding-bottom: max(28px, env(safe-area-inset-bottom));
+  }
+
+  .login-card {
+    width: 100%;
+    margin: 5vh auto 0;
+    padding: 24px 17px;
+    border-radius: 18px;
+  }
+
+  .dashboard-header {
+    align-items: flex-start;
+  }
+
+  .dashboard-header h1 {
+    font-size: clamp(1.65rem, 9vw, 2.2rem);
+  }
+
+  .status-strip {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .status-strip > div {
+    justify-content: space-between;
+  }
+
+  .status-strip .secondary-button {
+    width: 100%;
+  }
+
+  .delivery-card-header {
+    padding: 14px;
+  }
+
+  .delivery-card-body {
+    padding: 14px;
+  }
+
+  .delivery-status {
+    max-width: 48%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .actions-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .route-button,
+  .map-link,
+  .phone-link {
+    grid-column: 1;
+    width: 100%;
+    min-height: 50px;
+  }
+
+  .address-box strong,
+  .reference,
+  .customer-name,
+  .item-row,
+  .money-line {
+    overflow-wrap: anywhere;
+  }
+
+  .item-row,
+  .money-line {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 380px) {
+  .delivery-app {
+    padding-inline: 10px;
+  }
+
+  .login-card,
+  .delivery-card,
+  .status-strip {
+    border-radius: 14px;
+  }
+
+  .delivery-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .delivery-status {
+    max-width: 100%;
+  }
+}

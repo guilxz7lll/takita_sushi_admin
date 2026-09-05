@@ -15,6 +15,8 @@
   let orderSubscription = null;
   let orderFallbackTimer = null;
   let realtimeReloadTimer = null;
+  let dayRolloverTimer = null;
+  let lastAutoArchivedDay = "";
 
   const statusLabels = {
     awaiting_whatsapp: "Aguardando WhatsApp",
@@ -201,7 +203,27 @@
     orderSubscription = null;
     window.clearInterval(orderFallbackTimer);
     orderFallbackTimer = null;
+    window.clearInterval(dayRolloverTimer);
+    dayRolloverTimer = null;
     window.clearTimeout(realtimeReloadTimer);
+  }
+
+  function startDayRolloverWatcher() {
+    window.clearInterval(dayRolloverTimer);
+    let currentDay = todayInManaus();
+
+    dayRolloverTimer = window.setInterval(() => {
+      const nextDay = todayInManaus();
+
+      if (nextDay !== currentDay) {
+        currentDay = nextDay;
+        lastAutoArchivedDay = "";
+
+        reloadData()
+          .then(() => showToast("Novo dia iniciado. Pedidos anteriores foram enviados ao histórico."))
+          .catch((error) => console.error("Falha ao iniciar o novo dia:", error));
+      }
+    }, 30000);
   }
 
   function startOrderSync() {
@@ -210,6 +232,7 @@
     orderFallbackTimer = window.setInterval(() => {
       if (document.visibilityState === "visible") reloadData().catch(() => {});
     }, 8000);
+    startDayRolloverWatcher();
   }
 
   function setButtonLoading(button, loading, text = "Salvando...") {
@@ -281,12 +304,17 @@
     $("strong", pill).textContent = isOpen ? "Loja aberta" : "Loja fechada";
   }
 
+  function dayInManaus(value = new Date()) {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Manaus",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(new Date(value));
+  }
+
   function isToday(value) {
-    const date = new Date(value);
-    const today = new Date();
-    return date.getFullYear() === today.getFullYear()
-      && date.getMonth() === today.getMonth()
-      && date.getDate() === today.getDate();
+    return dayInManaus(value) === todayInManaus();
   }
 
   function renderDashboard() {
@@ -787,8 +815,30 @@
     setView(state.view);
   }
 
+  async function archivePreviousDaysIfNeeded() {
+    const today = todayInManaus();
+    if (lastAutoArchivedDay === today) return 0;
+
+    try {
+      const count = Number(await Store.archiveOrdersBeforeDay(today) || 0);
+      lastAutoArchivedDay = today;
+      return count;
+    } catch (error) {
+      console.error("Não foi possível arquivar pedidos anteriores:", error);
+      return 0;
+    }
+  }
+
   async function reloadData() {
-    state.data = await Store.loadAdminData();
+    await archivePreviousDaysIfNeeded();
+
+    const data = await Store.loadAdminData();
+
+    // A tela operacional mostra somente o dia atual.
+    // Dias anteriores continuam disponíveis normalmente em Relatórios.
+    data.orders = (data.orders || []).filter((order) => isToday(order.created_at));
+
+    state.data = data;
     renderAll();
   }
 

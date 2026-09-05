@@ -333,6 +333,30 @@
     return throwIfError(result);
   }
 
+  async function archiveOrdersBeforeDay(day) {
+    const supabaseClient = getClient();
+    if (!supabaseClient) throw new Error("Supabase não configurado.");
+
+    const session = await getSession();
+    if (!session?.user?.id) throw new Error("Sessão administrativa não encontrada.");
+
+    // Manaus usa UTC-04:00 durante todo o ano.
+    const cutoff = `${day}T00:00:00-04:00`;
+
+    const result = await supabaseClient
+      .from("orders")
+      .update({
+        deleted_at: new Date().toISOString(),
+        deleted_by: session.user.id
+      })
+      .is("deleted_at", null)
+      .lt("created_at", cutoff)
+      .select("id");
+
+    const archived = throwIfError(result) || [];
+    return archived.length;
+  }
+
   function nextDay(day) {
     const date = new Date(`${day}T12:00:00Z`);
     if (Number.isNaN(date.getTime())) throw new Error("Data inválida.");
@@ -397,6 +421,7 @@
     updateOrderStatus,
     archiveOrder,
     archiveOrdersForDay,
+    archiveOrdersBeforeDay,
     loadReportData,
     uploadProductImage
   };
