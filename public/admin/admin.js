@@ -82,25 +82,45 @@
     return adminAudioContext;
   }
 
-  function playAdminSound(kind = "update") {
-    const context = ensureAdminAudio();
-    if (!context || context.state !== "running") return;
-    const frequencies = kind === "new" ? [523, 659, 784] : [659, 784];
-    const now = context.currentTime;
-    frequencies.forEach((frequency, index) => {
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      oscillator.type = kind === "new" ? "triangle" : "sine";
-      oscillator.frequency.value = frequency;
-      const start = now + index * 0.11;
-      gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(kind === "new" ? 0.16 : 0.1, start + 0.015);
-      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.13);
-      oscillator.connect(gain).connect(context.destination);
-      oscillator.start(start);
-      oscillator.stop(start + 0.15);
+ function playAdminSound(kind = "update") {
+
+  if (kind === "new") {
+    const audio = new Audio("../sounds/novo-pedido.mp3");
+    audio.volume = 1;
+
+    audio.play().catch((error) => {
+      console.log("Não foi possível tocar o som de novo pedido:", error);
     });
+
+    return;
   }
+
+  const context = ensureAdminAudio();
+
+  if (!context || context.state !== "running") return;
+
+  const frequencies = [659, 784];
+  const now = context.currentTime;
+
+  frequencies.forEach((frequency, index) => {
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+
+    oscillator.type = "sine";
+    oscillator.frequency.value = frequency;
+
+    const start = now + index * 0.11;
+
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(0.1, start + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.13);
+
+    oscillator.connect(gain).connect(context.destination);
+
+    oscillator.start(start);
+    oscillator.stop(start + 0.15);
+  });
+}
 
   function adminNotificationsEnabled() {
     return "Notification" in window && Notification.permission === "granted";
