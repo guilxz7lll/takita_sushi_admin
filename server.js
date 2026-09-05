@@ -15,6 +15,7 @@ app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
 
+
 app.get("/entregador", (_req, res) => {
   res.redirect(308, "/entregador/");
 });
