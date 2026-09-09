@@ -6660,32 +6660,3 @@ button {
     font-size: 11px !important;
   }
 }
-
-@media (max-width: 768px) {
-  .nav-menu {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    gap: 8px !important;
-
-    width: 100% !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-
-    padding: 4px 0 8px !important;
-
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .nav-menu::-webkit-scrollbar {
-    display: none;
-  }
-
-  .nav-menu li {
-    flex: 0 0 auto !important;
-  }
-
-  .nav-menu a {
-    white-space: nowrap !important;
-  }
-}
