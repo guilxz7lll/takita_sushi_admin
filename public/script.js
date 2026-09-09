@@ -626,3 +626,29 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();
+
+
+function updateMyOrderNav() {
+  const links = document.querySelectorAll(".my-order-nav");
+
+  let hasOrder = false;
+
+  try {
+    const savedOrder = JSON.parse(
+      localStorage.getItem("takita_last_order")
+    );
+
+    hasOrder = Boolean(
+      savedOrder &&
+      (savedOrder.code || savedOrder.token)
+    );
+  } catch {
+    hasOrder = false;
+  }
+
+  links.forEach((link) => {
+    link.closest("li").style.display = hasOrder ? "" : "none";
+  });
+}
+
+updateMyOrderNav();
