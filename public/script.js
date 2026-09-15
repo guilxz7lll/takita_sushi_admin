@@ -1,5 +1,3 @@
-import { Analytics } from "@vercel/analytics/next"
-
 (function () {
   "use strict";
 
@@ -307,7 +305,7 @@ import { Analytics } from "@vercel/analytics/next"
     if (minimumNote) {
       if (!items.length) minimumNote.textContent = `Pedido mínimo: ${formatCurrency(minimum)}`;
       else if (amount < minimum) minimumNote.textContent = `Faltam ${formatCurrency(minimum - amount)} para o pedido mínimo de ${formatCurrency(minimum)}.`;
-      else minimumNote.textContent = `Pedido mínimo de ${formatCurrency(minimum)} atingido ✓`;
+      else minimumNote.textContent = `Pedido mínimo de ${formatCurrency(minimum)} atingido ���`;
       minimumNote.classList.toggle("ok", items.length > 0 && amount >= minimum);
     }
     if (!container) return;
