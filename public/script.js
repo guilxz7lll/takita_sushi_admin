@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/next"
+
 (function () {
   "use strict";
 
